@@ -156,3 +156,6 @@ auto-generated/
 .tmp/
 .temp/
 __temp__/
+
+# Test runtime artifacts
+tests/tmp-*/

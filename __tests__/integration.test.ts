@@ -1,6 +1,9 @@
 /**
  * Integration Tests - Complete system workflows
  * Tests for: Intakes, Customers, Projects, Transactions, MFA, State Isolation, Events
+ *
+ * NOTE: These tests require a live Supabase instance.
+ * Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to run them.
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
@@ -8,15 +11,21 @@ import { createClient } from '@supabase/supabase-js';
 import { eventBus, Event } from '@/lib/event-system';
 import { RpcClient } from '@/lib/inter-bric-rpc';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const integrationEnabled = Boolean(supabaseUrl && supabaseKey);
+
+// Skip all integration suites when Supabase credentials are absent.
+const describeIntegration = integrationEnabled ? describe : describe.skip;
+
+const supabase = integrationEnabled
+  ? createClient(supabaseUrl!, supabaseKey!)
+  : null as unknown as ReturnType<typeof createClient>;
 
 /**
  * Test Suite: Lead Intake → Customer → Project → Deposit
  */
-describe('Complete Workflow: Lead to Project Activation', () => {
+describeIntegration('Complete Workflow: Lead to Project Activation', () => {
   let customerId: string;
   let projectId: string;
   const testState = 'CA';
@@ -179,7 +188,7 @@ describe('Complete Workflow: Lead to Project Activation', () => {
 /**
  * Test Suite: State Isolation and RLS
  */
-describe('State Isolation & Row-Level Security', () => {
+describeIntegration('State Isolation & Row-Level Security', () => {
   const statesUnderTest = ['CA', 'IL', 'TX'];
   const createdCustomers: Record<string, string> = {};
 
@@ -270,7 +279,7 @@ describe('State Isolation & Row-Level Security', () => {
 /**
  * Test Suite: MFA and Multi-Auth for Admin Operations
  */
-describe('MFA & Dual-Auth (Law #5)', () => {
+describeIntegration('MFA & Dual-Auth (Law #5)', () => {
   let adminUserId: string;
 
   beforeAll(async () => {
@@ -375,7 +384,7 @@ describe('MFA & Dual-Auth (Law #5)', () => {
 /**
  * Test Suite: Event System & Event Ledger
  */
-describe('Event System & Audit Trail (Law #7)', () => {
+describeIntegration('Event System & Audit Trail (Law #7)', () => {
   let capturedEvents: Event[] = [];
 
   beforeAll(async () => {
@@ -452,7 +461,7 @@ describe('Event System & Audit Trail (Law #7)', () => {
 /**
  * Test Suite: Inter-BRIC Communication (Law #8)
  */
-describe('Inter-BRIC RPC & Zero-Trust (Law #8)', () => {
+describeIntegration('Inter-BRIC RPC & Zero-Trust (Law #8)', () => {
   let rpcClient: RpcClient;
 
   beforeAll(async () => {
@@ -522,7 +531,7 @@ describe('Inter-BRIC RPC & Zero-Trust (Law #8)', () => {
 /**
  * Test Suite: Compliance & Policy Gates (Law #6)
  */
-describe('Compliance Gates & Policy Enforcement (Law #6)', () => {
+describeIntegration('Compliance Gates & Policy Enforcement (Law #6)', () => {
   it('should check compliance before project activation', async () => {
     // Create project and verify it requires compliance clearance
     const projectData = {
@@ -561,7 +570,7 @@ describe('Compliance Gates & Policy Enforcement (Law #6)', () => {
 /**
  * Test Suite: Health checks and system status
  */
-describe('System Health Checks', () => {
+describeIntegration('System Health Checks', () => {
   it('should return health status', async () => {
     const response = await fetch('/api/health');
 
