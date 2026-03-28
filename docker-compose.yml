@@ -1,0 +1,177 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database (Supabase-compatible)
+  postgres:
+    image: postgres:15-alpine
+    container_name: jga-os-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-jga_enterprise}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_INITDB_ARGS: "-c shared_preload_libraries=pgvector"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - jga-os-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: jga-os-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_password}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - jga-os-network
+
+  # PgBouncer Connection Pool
+  pgbouncer:
+    image: edoburu/pgbouncer
+    container_name: jga-os-pgbouncer
+    environment:
+      DATABASES_HOST: postgres
+      DATABASES_PORT: 5432
+      DATABASES_USER: ${POSTGRES_USER:-postgres}
+      DATABASES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DATABASES_DBNAME: ${POSTGRES_DB:-jga_enterprise}
+      PGBOUNCER_POOL_MODE: transaction
+      PGBOUNCER_MAX_CLIENT_CONN: 1000
+      PGBOUNCER_DEFAULT_POOL_SIZE: 25
+    ports:
+      - "6432:6432"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - jga-os-network
+
+  # Application Server (Node.js)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jga-os-app
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@pgbouncer:6432/${POSTGRES_DB:-jga_enterprise}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-redis_password}@redis:6379
+      SUPABASE_URL: ${SUPABASE_URL:-http://localhost:8000}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_started
+    volumes:
+      - ./app:/app/app
+      - ./lib:/app/lib
+      - ./components:/app/components
+      - node_modules:/app/node_modules
+    networks:
+      - jga-os-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # SeededDB Initialization (optional - runs migrations)
+  migrations:
+    image: migrate/migrate
+    container_name: jga-os-migrations
+    volumes:
+      - ./supabase/migrations:/migrations:ro
+    command: -path=/migrations/ -database=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-jga_enterprise}?sslmode=disable up
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - jga-os-network
+    profiles:
+      - init
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: jga-os-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - app
+    networks:
+      - jga-os-network
+
+  # Prometheus for Monitoring (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: jga-os-prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - jga-os-network
+    profiles:
+      - monitoring
+
+  # Grafana for Dashboards (optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: jga-os-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - jga-os-network
+    profiles:
+      - monitoring
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  node_modules:
+    driver: local
+
+networks:
+  jga-os-network:
+    driver: bridge

@@ -1,0 +1,17 @@
+app/
+  (public)/
+  (auth)/
+  (dashboard)/
+  api/
+components/
+lib/
+  auth/
+  pricing/
+  ledger/
+  guards/
+  supabase/
+docs/
+prompts/
+supabase/
+tests/
+.github/

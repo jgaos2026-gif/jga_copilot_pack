@@ -1,0 +1,46 @@
+# CODEOWNERS file for JGA Enterprise OS
+# This file defines code ownership and review requirements
+
+# Default owners for entire repo
+* @jaysgraphicarts
+
+# GitHub-specific files
+.github/ @jaysgraphicarts
+
+# Core system libraries and business logic
+lib/ @jaysgraphicarts
+brics/ @jaysgraphicarts
+scripts/ @jaysgraphicarts
+
+# Security and compliance sensitive areas
+# (Requires additional review)
+lib/security/ @jaysgraphicarts
+lib/compliance/ @jaysgraphicarts
+lib/audit/ @jaysgraphicarts
+
+# State isolation and multi-tenant logic
+lib/state-brics/ @jaysgraphicarts
+supabase/ @jaysgraphicarts
+
+# Documentation
+*.md @jaysgraphicarts
+docs/ @jaysgraphicarts
+
+# Infrastructure and DevOps
+Dockerfile @jaysgraphicarts
+docker-compose.yml @jaysgraphicarts
+k8s/ @jaysgraphicarts
+.github/workflows/ @jaysgraphicarts
+
+# Tests - critical to review with implementation
+tests/ @jaysgraphicarts
+*.test.ts @jaysgraphicarts
+
+# Configuration files
+tsconfig.json @jaysgraphicarts
+.eslintrc.* @jaysgraphicarts
+vitest.config.ts @jaysgraphicarts
+
+# Deployment is sensitive - requires owner approval
+PRODUCTION_READINESS.md @jaysgraphicarts
+DEPLOYMENT*.md @jaysgraphicarts
