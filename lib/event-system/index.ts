@@ -4,8 +4,6 @@
  * Implements the Nervous System layer
  */
 
-import { EventEmitter } from 'events';
-
 export interface Event {
   id: string;
   type: string;

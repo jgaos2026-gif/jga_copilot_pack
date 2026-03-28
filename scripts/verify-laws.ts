@@ -101,7 +101,7 @@ export async function checkBestPractices(): Promise<void> {
 }
 
 // Run verification
-if (import.meta.main) {
+if (typeof import.meta !== 'undefined' && import.meta.url === `file://${process.argv[1]}`) {
   await verifySQLLaws();
   await checkBestPractices();
   

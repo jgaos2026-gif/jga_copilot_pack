@@ -11,26 +11,46 @@
     "test:consensus": "vitest tests/sovereign-stitch-consensus.test.ts --run",
     "test:raft-3node": "vitest tests/sovereign-stitch-raft-3node-demo.test.ts --run",
     "test:demo": "vitest brics/demo/corrupt-heal.test.ts --run",
+    "test:integration": "vitest __tests__/integration.test.ts --run",
     "test:all": "vitest run",
     "test:ui": "vitest --ui",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "type-check": "tsc --noEmit",
     "launch": "npx ts-node scripts/launch.ts",
     "go-live": "npx ts-node scripts/go-live.ts",
     "load-test": "npx ts-node scripts/load-test.ts",
     "security-audit": "npx ts-node scripts/security-audit.ts",
-    "build": "echo 'Build placeholder'",
-    "start": "node server-localhost.js",
-    "dev": "node server-localhost.js"
+    "verify-laws": "ts-node scripts/verify-laws.ts",
+    "build": "next build",
+    "start": "next start",
+    "dev": "next dev"
   },
   "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "next": "^14.0.0",
     "typescript": "^5.3.0",
-    "zod": "^3.22.0"
+    "zod": "^3.22.0",
+    "@supabase/supabase-js": "^2.38.0",
+    "socket.io": "^4.7.0",
+    "socket.io-client": "^4.7.0",
+    "tailwindcss": "^3.3.0",
+    "@anthropic-ai/sdk": "^0.12.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
     "vitest": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^6.13.0",
     "@typescript-eslint/parser": "^6.13.0",
-    "ts-node": "^10.9.0"
+    "ts-node": "^10.9.0",
+    "eslint": "^8.55.0",
+    "eslint-config-next": "^14.0.0",
+    "prettier": "^3.1.0",
+    "postcss": "^8.4.32",
+    "autoprefixer": "^10.4.16"
   },
   "engines": {
     "node": ">=18.0.0",

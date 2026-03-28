@@ -4,8 +4,8 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { eventBus, Event, EventTopics, createEvent } from '../event-system';
-import { RpcServer } from '../inter-bric-rpc';
+import { eventBus, Event, EventTopics, createEvent } from '../../lib/event-system';
+import { RpcServer } from '../../lib/inter-bric-rpc';
 
 export interface StateBricConfig {
   stateCode: string; // 'CA', 'IL', 'TX', etc.

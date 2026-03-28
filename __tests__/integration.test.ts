@@ -378,7 +378,7 @@ describe('Event System & Audit Trail (Law #7)', () => {
 
   beforeAll(async () => {
     // Subscribe to all events for testing
-    eventBus.subscribe('*', (event) => {
+    eventBus.subscribe('*', (event: Event) => {
       capturedEvents.push(event);
     });
   });

@@ -4,8 +4,9 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { eventBus, EventTopics, createEvent } from '../lib/event-system';
-import { RpcClient } from '../lib/inter-bric-rpc';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { eventBus, EventTopics, createEvent } from '../../lib/event-system';
+import { RpcClient } from '../../lib/inter-bric-rpc';
 
 export interface OwnersRoomConfig {
   supabaseUrl: string;
@@ -112,7 +113,7 @@ export class OwnersRoom {
         .in('type', ['deposit', 'payment']);
 
       const totalRevenue = (revenueData.data || []).reduce(
-        (sum, t) => sum + (t.amount || 0),
+        (sum: number, t: any) => sum + (t.amount || 0),
         0
       );
 
