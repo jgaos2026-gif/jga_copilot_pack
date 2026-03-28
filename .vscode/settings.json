@@ -1,0 +1,92 @@
+{
+  // Editor Settings
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.wordWrap": "on",
+  "editor.rulers": [80, 120],
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  
+  // Files
+  "files.exclude": {
+    "**/.git": true,
+    "**/.vscode": false,
+    "**node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/coverage": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/coverage/**": true,
+    "**/dist/**": true,
+    "**node_modules/**": true
+  },
+  "files.defaultLanguage": "typescript",
+  
+  // Search
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/coverage": true
+  },
+  
+  // TypeScript & JavaScript (using new API settings)
+  "js/ts.tsdk.path": "node_modules/typescript/lib",
+  "js/ts.tsdk.promptToUseWorkspaceVersion": true,
+  "js/ts.suggest.completeFunctionCalls": true,
+  "typescript.preferences.importModuleSpecifierFormat": "absolute",
+  "typescript.preferences.quotePreference": "single",
+  
+  // Prettier Configuration
+  "prettier.semi": true,
+  "prettier.singleQuote": true,
+  "prettier.trailingComma": "es5",
+  "prettier.printWidth": 100,
+  "prettier.arrowParens": "always",
+  
+  // ESLint
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.format.enable": true,
+  
+  // Language-specific formatters (using only valid built-in formatters)
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.formatOnSave": false
+  },
+  
+  // Git
+  "git.ignoreLimitWarning": true,
+  "git.suggestSmartCommit": true,
+  
+  // Testing
+  "vitest.enable": true,
+  "vitest.autoRun": false,
+  
+  // Terminal
+  "terminal.integrated.fontSize": 12,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  
+  // Theme & Appearance
+  "workbench.editor.tabSizing": "shrink",
+  "workbench.tree.indent": 16
+}
