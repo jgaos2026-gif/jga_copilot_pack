@@ -1,0 +1,18 @@
+{
+  "bricks": [
+    {
+      "id": "1774009283222-d3cpcqo",
+      "bricId": "s1",
+      "schemaVersion": "v1",
+      "data": {
+        "x": 1
+      },
+      "digest": "ddc5ea6b6b10b7b47c1afff6701296b06771b8a5acbdb1c758f855a0f094a3c4"
+    }
+  ],
+  "log": [
+    "ddc5ea6b6b10b7b47c1afff6701296b06771b8a5acbdb1c758f855a0f094a3c4"
+  ],
+  "merkle": "ddc5ea6b6b10b7b47c1afff6701296b06771b8a5acbdb1c758f855a0f094a3c4",
+  "timestamp": 1774009283789
+}

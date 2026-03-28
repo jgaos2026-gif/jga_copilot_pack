@@ -1,0 +1,459 @@
+---
+# Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jga-os
+
+---
+# ConfigMap for environment configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jga-os-config
+  namespace: jga-os
+data:
+  ENVIRONMENT: production
+  LOG_LEVEL: info
+  PUBLIC_URL: "https://api.jga-os.example.com"
+  STATES: "CA,TX"
+  MFA_REQUIRED: "true"
+  VPN_REQUIRED: "true"
+  COMPLIANCE_CHECK_INTERVAL: "3600"
+  HEALTH_CHECK_INTERVAL: "60"
+
+---
+# Secrets for sensitive data (create separately with kubectl create secret)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: jga-os-secrets
+  namespace: jga-os
+type: Opaque
+data:
+  # Base64 encoded (create via: echo -n "value" | base64)
+  # KMS_MASTER_KEY: [base64 KMS key ARN]
+  # RAFT_SERVICE_URL: [base64 Go Raft service URL]
+  # DATABASE_URL: [base64 connection string]
+
+---
+# PersistentVolumeClaim for State BRIC data (CA)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: state-bric-ca-pvc
+  namespace: jga-os
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: gp2
+
+---
+# PersistentVolumeClaim for State BRIC data (TX)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: state-bric-tx-pvc
+  namespace: jga-os
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: gp2
+
+---
+# StatefulSet for Raft consensus nodes (primary)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: brics-raft-primary
+  namespace: jga-os
+spec:
+  serviceName: brics-raft
+  replicas: 3
+  selector:
+    matchLabels:
+      app: brics-raft
+      role: primary
+  template:
+    metadata:
+      labels:
+        app: brics-raft
+        role: primary
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - brics-raft
+                topologyKey: kubernetes.io/hostname
+      containers:
+        - name: brics-raft
+          image: jga-os:1.0
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+            - name: raft
+              containerPort: 50051
+            - name: metrics
+              containerPort: 9090
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: RAFT_ROLE
+              value: primary
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: RAFT_SERVICE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: jga-os-secrets
+                  key: RAFT_SERVICE_URL
+          envFrom:
+            - configMapRef:
+                name: jga-os-config
+          volumeMounts:
+            - name: raft-data
+              mountPath: /app/data/raft
+            - name: state-bric-ca
+              mountPath: /app/data/states/CA
+            - name: state-bric-tx
+              mountPath: /app/data/states/TX
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 2000m
+              memory: 4Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 5
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            readOnlyRootFilesystem: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+      volumes:
+        - name: state-bric-ca
+          persistentVolumeClaim:
+            claimName: state-bric-ca-pvc
+        - name: state-bric-tx
+          persistentVolumeClaim:
+            claimName: state-bric-tx-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: raft-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 50Gi
+        storageClassName: gp2
+
+---
+# Headless Service for Raft cluster discovery
+apiVersion: v1
+kind: Service
+metadata:
+  name: brics-raft
+  namespace: jga-os
+  labels:
+    app: brics-raft
+spec:
+  clusterIP: None
+  ports:
+    - port: 50051
+      targetPort: raft
+      name: raft
+  selector:
+    app: brics-raft
+
+---
+# Deployment for Public layer (stateless, multiple replicas)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: brics-public
+  namespace: jga-os
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: brics-public
+  template:
+    metadata:
+      labels:
+        app: brics-public
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - brics-public
+                topologyKey: kubernetes.io/hostname
+      containers:
+        - name: brics-public
+          image: jga-os:1.0
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: BRICS_LAYER
+              value: public
+            - name: NODE_ENV
+              value: production
+          envFrom:
+            - configMapRef:
+                name: jga-os-config
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+
+---
+# Service for Public layer
+apiVersion: v1
+kind: Service
+metadata:
+  name: brics-public
+  namespace: jga-os
+spec:
+  type: ClusterIP
+  selector:
+    app: brics-public
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+
+---
+# Deployment for System B (stateless, multiple replicas)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: brics-system-b
+  namespace: jga-os
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: brics-system-b
+  template:
+    metadata:
+      labels:
+        app: brics-system-b
+    spec:
+      containers:
+        - name: brics-system-b
+          image: jga-os:1.0
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            - name: BRICS_LAYER
+              value: system-b
+            - name: NODE_ENV
+              value: production
+          envFrom:
+            - configMapRef:
+                name: jga-os-config
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 2Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 10
+
+---
+# Service for System B
+apiVersion: v1
+kind: Service
+metadata:
+  name: brics-system-b
+  namespace: jga-os
+spec:
+  type: ClusterIP
+  selector:
+    app: brics-system-b
+  ports:
+    - port: 80
+      targetPort: http
+      protocol: TCP
+
+---
+# Ingress for external access
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jga-os-ingress
+  namespace: jga-os
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rate-limit: "1000"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - api.jga-os.example.com
+      secretName: jga-os-tls
+  rules:
+    - host: api.jga-os.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: brics-public
+                port:
+                  number: 80
+          - path: /api/leads
+            pathType: Prefix
+            backend:
+              service:
+                name: brics-system-b
+                port:
+                  number: 80
+
+---
+# NetworkPolicy for zero-trust (only allow necessary traffic)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: jga-os-network-policy
+  namespace: jga-os
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: jga-os
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 50051
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              name: jga-os
+      ports:
+        - protocol: TCP
+          port: 8080
+        - protocol: TCP
+          port: 50051
+    - to:
+        - podSelector: {}
+      ports:
+        - protocol: TCP
+          port: 53
+        - protocol: UDP
+          port: 53
+
+---
+# HorizontalPodAutoscaler for auto-scaling
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: brics-public-hpa
+  namespace: jga-os
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: brics-public
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+---
+# ServiceMonitor for Prometheus metrics
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: jga-os-metrics
+  namespace: jga-os
+spec:
+  selector:
+    matchLabels:
+      app: brics-raft
+  endpoints:
+    - port: metrics
+      interval: 30s
