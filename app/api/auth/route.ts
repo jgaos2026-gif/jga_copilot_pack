@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
 
@@ -11,14 +12,6 @@ const supabase = createClient(
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
-});
-
-const registerSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(6),
-  fullName: z.string(),
-  role: z.enum(['contractor', 'customer', 'admin']),
-  stateCode: z.string().length(2).optional(),
 });
 
 /**

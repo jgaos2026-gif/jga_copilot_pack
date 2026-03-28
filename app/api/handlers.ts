@@ -3,7 +3,8 @@
  * All 10 main endpoints per spec in docs/API_CONTRACTS.md
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { eventBus, createEvent, EventTopics } from '@/lib/event-system';

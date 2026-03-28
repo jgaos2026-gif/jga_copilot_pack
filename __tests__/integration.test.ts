@@ -3,9 +3,9 @@
  * Tests for: Intakes, Customers, Projects, Transactions, MFA, State Isolation, Events
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import { createClient } from '@supabase/supabase-js';
-import { eventBus, EventBus, Event } from '@/lib/event-system';
+import { eventBus, Event } from '@/lib/event-system';
 import { RpcClient } from '@/lib/inter-bric-rpc';
 
 const supabase = createClient(
@@ -152,12 +152,14 @@ describe('Complete Workflow: Lead to Project Activation', () => {
       .single();
 
     expect(error).toBeNull();
-    expect(data.deposit_status).toBe('confirmed');
+    expect(data?.deposit_status).toBe('confirmed');
   });
 
   it('should emit events throughout workflow', async () => {
     const receivedEvents: Event[] = [];
-    const handler = (event: Event) => receivedEvents.push(event);
+    const handler = async (event: Event): Promise<void> => {
+      receivedEvents.push(event);
+    };
 
     // Subscribe to all relevant events
     eventBus.subscribe('customer-events', handler);
