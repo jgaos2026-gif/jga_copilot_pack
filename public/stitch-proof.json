@@ -1,0 +1,48 @@
+{
+  "_meta": {
+    "description": "Publicly verifiable proof that the JGA Sovereign Stitch Brick is operational. No private keys, HMAC secrets, or raw data are contained in this file.",
+    "generatedAt": "2026-04-02T02:18:32.494Z",
+    "repo": "https://github.com/jgaos2026-gif/jga_copilot_pack",
+    "verificationGuide": {
+      "step1": "recompute Merkle root: merkleRoot(proof.entries.map(e => e.commitment))",
+      "step2": "confirm recomputed root === proof.merkleRoot",
+      "step3": "verify RSA signature: verify(proof.publicKey, canonicalPayload, proof.signature)",
+      "canonicalPayload": "JSON.stringify({ entries: proof.entries, merkleRoot: proof.merkleRoot, timestamp: proof.timestamp })"
+    }
+  },
+  "selfCheck": {
+    "passed": true,
+    "entryCount": 5,
+    "merkleRootPresent": true,
+    "signatureAlgorithm": "RSA-SHA256 (2048-bit)",
+    "commitmentAlgorithm": "HMAC-SHA256"
+  },
+  "proof": {
+    "entries": [
+      {
+        "id": "demo-entry-001",
+        "commitment": "eead58b8f80a3e9badf69e2d8b678ada800dd5b974ad472d559a53e1f4202d85"
+      },
+      {
+        "id": "demo-entry-002",
+        "commitment": "0d91be918aa5cdb4adc2d45fa780ee0f350e0a55c1ba0409b13aa73ab3650c9e"
+      },
+      {
+        "id": "demo-entry-003",
+        "commitment": "09e568d608d3dcf103a8d5a2e2ac2bc06d7eb9ce00620ea413ec1014497c535d"
+      },
+      {
+        "id": "demo-entry-004",
+        "commitment": "6fe03e550518c33f9c434c67e7c1c2bf451ac01c387a832f6636ffd7b4733ee1"
+      },
+      {
+        "id": "demo-entry-005",
+        "commitment": "ea0949da0b908863c73ccf4469dae3cf9a75a32a6c2a89d1b84be0447d0e1b22"
+      }
+    ],
+    "merkleRoot": "e0cf62e3b8a06cbee227d06e1e5ada6048a0372ad898c2830a56b1f79b37ce4a",
+    "signature": "nvend/YrvMa7/L56VCU56pRMxNNO8ztXLV8VfbnGNIMCgqQ7tEGokoQkyQl2e3/m8tukiP+OqkZMPQno+Blm3cvUe9auCGUDaHlxBeyyjGTelo3obiZ5kesMgF25SaJtKEZA7iYpqwKA2MGQD+M8SpUNOyzLByUncBc/gx0KeL35arLKymvUGrPawmWOmo82w7E6hcy17bc1u4t1lASXWDnLAAc1cC6ADgfns14A29flkVkMb178YnINQYKloCYLTlcnBwuH2HQ8Ts4aSMe7+e3uoV3uvGcXUxUIVlm5mcOj1xCgfN1/0xhjXfd+CMOsqfWNEXG0gntiobP58OnFFw==",
+    "publicKey": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoVVhSpnUZKEKuqdKSqJX\n0vM3RTnxMSUJdIYkESQqJsKMvjdg9Zk/7vk6Til67PfXF7NtF41/w9an+9TXzxFe\n0u8OM0AbeEvBKSan8EpjY+++Ncs9BhkPKfDIXDymKa2N84OGc1iGRN14Z5tyFTz8\nujZPAwIPa9oADFA6QSHnSv8xcpEUMMHO8j5IFwSS9z8LwUVzVOx3JarzARrMHC0W\njRWOsOeO6cB6iyRa1NME3Oke3Opfi23zA5nh2jYtAFqVFSoInBMiUosRBsGnRQyg\nxxwW5iUv2Bs0UP+eqlaqLUYc9vjDnlXr6/v/Us3Mljg59WMK3XdbRGbxheE9dOjV\nxQIDAQAB\n-----END PUBLIC KEY-----\n",
+    "timestamp": 1775096312494
+  }
+}

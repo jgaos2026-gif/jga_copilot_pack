@@ -414,7 +414,8 @@ Before launch, verify April Keys completeness:
 ### Technical Lead Sign-off
 - Name: Jay W.
 - Title: Owner / Technical Lead — Jay's Graphic Arts LLC
-- Signature: `sha256:stitch-brick-public-proof-verified` · Date: 2026-04-02
+- Attestation: *I attest that all 8 system laws are enforced in code, the stitch brick public proof passes self-verification, and the system is ready for phased launch.* · Date: 2026-04-02
+<!-- NOTE: This is a written attestation, not a machine-verifiable cryptographic signature. Replace with a GPG/code-signing signature before final legal review. -->
 
 ### Legal Counsel Sign-off
 - Name: ________________________  *(pending — required before compliance-gate activation)*
@@ -425,7 +426,8 @@ Before launch, verify April Keys completeness:
 ### Owner Sign-off
 - Name: Jay W.
 - Title: Owner — Jay's Graphic Arts LLC
-- Signature: `sha256:stitch-brick-public-proof-verified` · Date: 2026-04-02
+- Attestation: *I approve this system for phased launch as described in the launch checklist.* · Date: 2026-04-02
+<!-- NOTE: This is a written attestation, not a machine-verifiable cryptographic signature. Replace with a GPG/code-signing signature before final legal review. -->
 
 ---
 
