@@ -1,11 +1,12 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient } from '@/lib/supabase';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabase = new Proxy({} as ReturnType<typeof getSupabaseClient>, {
+  get(_t, prop) {
+    return Reflect.get(getSupabaseClient(), prop as string);
+  },
+});
 
 /**
  * GET /api/contracts

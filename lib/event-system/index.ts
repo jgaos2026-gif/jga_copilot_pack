@@ -128,6 +128,19 @@ export class EventBus {
   }
 
   /**
+   * Get all DLQ events across all topics (ops/debugging)
+   */
+  getDLQEvents(): Event[] {
+    const all: Event[] = [];
+    for (const topic of this.topics.values()) {
+      if (topic.deadLetterQueue) {
+        all.push(...topic.deadLetterQueue);
+      }
+    }
+    return all;
+  }
+
+  /**
    * Replay DLQ events (manual recovery)
    */
   async replayDeadLetterQueue(topic: string): Promise<number> {

@@ -6,7 +6,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import { eventBus, EventTopics, createEvent } from '../../lib/event-system';
-import { RpcClient } from '../../lib/inter-bric-rpc';
 
 export interface OwnersRoomConfig {
   supabaseUrl: string;
@@ -320,5 +319,29 @@ export class OwnersRoom {
    */
   getInternalAuditLog(): any[] {
     return [...this.auditLog];
+  }
+
+  /**
+   * Audit Owners Room security posture (Law #5)
+   */
+  async auditOwnersRoomSecurity(): Promise<{ ok: boolean; violations: string[] }> {
+    const violations: string[] = [];
+
+    // Check MFA requirement is enforced
+    const { data: roles, error } = await this.db
+      .from('user_roles')
+      .select('user_id, mfa_enabled, role')
+      .in('role', ['owner', 'admin']);
+
+    if (error) {
+      violations.push(`Cannot read user_roles: ${error.message}`);
+    } else if (roles) {
+      const noMfa = (roles as { user_id: string; mfa_enabled: boolean; role: string }[]).filter(r => !r.mfa_enabled);
+      for (const u of noMfa) {
+        violations.push(`User ${u.user_id} (${u.role}) does not have MFA enabled`);
+      }
+    }
+
+    return { ok: violations.length === 0, violations };
   }
 }

@@ -1,8 +1,5 @@
-import Anthropic from '@anthropic-ai/sdk';
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// TODO: Anthropic AI integration pending API credentials (see .env.example ANTHROPIC_API_KEY)
+// import Anthropic from '@anthropic-ai/sdk';
 
 /**
  * Verify all 8 system laws are enforced in codebase
