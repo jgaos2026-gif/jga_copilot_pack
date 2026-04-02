@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "description": "JGA Enterprise OS - Copilot Build Pack",
+  "author": "Jay's Graphic Arts LLC <legal@jaysgraphicarts.com>",
+  "license": "SEE LICENSE IN LICENSE",
   "private": true,
   "scripts": {
     "test": "vitest",

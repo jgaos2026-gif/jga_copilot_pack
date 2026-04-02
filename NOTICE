@@ -1,0 +1,44 @@
+NOTICE — JGA Enterprise OS
+
+Copyright (c) 2026 Jay's Graphic Arts LLC. All rights reserved.
+
+-----------------------------------------------------------------------
+TRADEMARKS
+-----------------------------------------------------------------------
+"JGA Enterprise OS", "JGA Copilot Pack", "BRICS Architecture",
+"Sovereign Stitch", and "System-B" are trademarks or service marks of
+Jay's Graphic Arts LLC. Unauthorized use of these marks is prohibited.
+
+-----------------------------------------------------------------------
+PROPRIETARY NOTICE
+-----------------------------------------------------------------------
+This product and all associated source code, documentation, configuration
+files, design assets, and business logic constitute proprietary, trade
+secret information owned exclusively by Jay's Graphic Arts LLC.
+
+No license, express or implied, is granted to any person or entity
+outside of Jay's Graphic Arts LLC without a signed written agreement.
+
+-----------------------------------------------------------------------
+THIRD-PARTY ACKNOWLEDGEMENTS
+-----------------------------------------------------------------------
+This product makes use of the following open-source libraries, each
+governed by their respective licenses:
+
+  - Next.js       (MIT License)         https://nextjs.org
+  - React         (MIT License)         https://reactjs.org
+  - TypeScript    (Apache 2.0 License)  https://typescriptlang.org
+  - Zod           (MIT License)         https://zod.dev
+  - Supabase JS   (MIT License)         https://supabase.com
+  - Socket.IO     (MIT License)         https://socket.io
+  - Tailwind CSS  (MIT License)         https://tailwindcss.com
+  - Vitest        (MIT License)         https://vitest.dev
+
+Use of third-party libraries does not grant any rights to the proprietary
+code, architecture, or business logic of JGA Enterprise OS.
+
+-----------------------------------------------------------------------
+CONTACT
+-----------------------------------------------------------------------
+Jay's Graphic Arts LLC
+legal@jaysgraphicarts.com

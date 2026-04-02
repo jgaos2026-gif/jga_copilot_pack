@@ -1,3 +1,7 @@
+// Copyright (c) 2026 Jay's Graphic Arts LLC. All rights reserved.
+// Proprietary and confidential. Unauthorized use, reproduction, or distribution
+// of this software is strictly prohibited. See LICENSE for details.
+
 import { describe, it, expect } from 'vitest'
 import { ReplicaManager } from '../lib/sovereignStitch/replica'
 import { join } from 'path'

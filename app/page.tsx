@@ -1,3 +1,7 @@
+// Copyright (c) 2026 Jay's Graphic Arts LLC. All rights reserved.
+// Proprietary and confidential. Unauthorized use, reproduction, or distribution
+// of this software is strictly prohibited. See LICENSE for details.
+
 export default function Home() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-blue-600 to-blue-800 text-white">

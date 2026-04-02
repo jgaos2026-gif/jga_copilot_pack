@@ -1,3 +1,7 @@
+// Copyright (c) 2026 Jay's Graphic Arts LLC. All rights reserved.
+// Proprietary and confidential. Unauthorized use, reproduction, or distribution
+// of this software is strictly prohibited. See LICENSE for details.
+
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';

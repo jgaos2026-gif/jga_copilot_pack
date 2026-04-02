@@ -1,3 +1,7 @@
+// Copyright (c) 2026 Jay's Graphic Arts LLC. All rights reserved.
+// Proprietary and confidential. Unauthorized use, reproduction, or distribution
+// of this software is strictly prohibited. See LICENSE for details.
+
 /**
  * Owners Room BRIC Implementation
  * Administrative control plane with MFA + Dual-Auth (Law #5)

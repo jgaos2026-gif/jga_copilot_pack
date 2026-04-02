@@ -1,3 +1,7 @@
+// Copyright (c) 2026 Jay's Graphic Arts LLC. All rights reserved.
+// Proprietary and confidential. Unauthorized use, reproduction, or distribution
+// of this software is strictly prohibited. See LICENSE for details.
+
 /**
  * Integration Tests - Complete system workflows
  * Tests for: Intakes, Customers, Projects, Transactions, MFA, State Isolation, Events
