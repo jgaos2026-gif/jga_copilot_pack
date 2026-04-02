@@ -181,7 +181,8 @@ export class RpcServer {
   private handlers: Map<string, (params: any) => Promise<any>> = new Map();
 
   constructor(config: mTLSConfig) {
-    this.config = config;
+    // Store config for future use (currently unused)
+    void config;
   }
 
   /**

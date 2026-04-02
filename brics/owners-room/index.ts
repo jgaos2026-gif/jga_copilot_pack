@@ -3,8 +3,8 @@
  * Administrative control plane with MFA + Dual-Auth (Law #5)
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import { eventBus, EventTopics, createEvent } from '../../lib/event-system';
 import { RpcClient } from '../../lib/inter-bric-rpc';
 
@@ -28,7 +28,7 @@ export interface AdminUser {
  */
 export class OwnersRoom {
   private db: SupabaseClient;
-  private rpcClients: Map<string, RpcClient> = new Map();
+  // private rpcClients: Map<string, RpcClient> = new Map();
   private auditLog: any[] = [];
 
   constructor(config: OwnersRoomConfig) {
