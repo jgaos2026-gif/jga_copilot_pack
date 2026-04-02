@@ -6,7 +6,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import { eventBus, EventTopics, createEvent } from '../../lib/event-system';
-import { RpcClient } from '../../lib/inter-bric-rpc';
 
 export interface OwnersRoomConfig {
   supabaseUrl: string;

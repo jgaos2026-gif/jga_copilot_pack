@@ -8,8 +8,9 @@
  * - State BRIC data isolation under load
  */
 
-import { SystemBBric } from '../brics/system-b/index'
-import { createBRICS, BRICSOrchestrator } from '../brics/orchestrator'
+// TODO: these imports will be used when live load-test integration is wired up
+// import { SystemBBric } from '../brics/system-b/index'
+import { createBRICS } from '../brics/orchestrator'
 import path from 'path'
 
 interface LoadTestConfig {

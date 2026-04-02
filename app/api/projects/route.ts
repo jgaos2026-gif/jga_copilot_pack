@@ -1,12 +1,9 @@
+import { getServiceClient } from '@/lib/supabase-client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+
 import { z } from 'zod';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 const projectSchema = z.object({
   customer_id: z.string().uuid(),
@@ -25,7 +22,7 @@ export async function GET(request: NextRequest) {
   try {
     const customerId = request.nextUrl.searchParams.get('customer_id');
 
-    let query = supabase.from('projects').select('*');
+    let query = getServiceClient().from('projects').select('*');
 
     if (customerId) {
       query = query.eq('customer_id', customerId);
@@ -58,7 +55,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const projectData = projectSchema.parse(body);
 
-    const { data, error } = await supabase
+    const { data, error } = await getServiceClient()
       .from('projects')
       .insert({
         customer_id: projectData.customer_id,
@@ -100,7 +97,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { id, ...updates } = body;
 
-    const { data, error } = await supabase
+    const { data, error } = await getServiceClient()
       .from('projects')
       .update(updates)
       .eq('id', id)
@@ -140,7 +137,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const { error } = await supabase
+    const { error } = await getServiceClient()
       .from('projects')
       .delete()
       .eq('id', id);

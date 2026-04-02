@@ -10,48 +10,72 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
-      - name: Run production tests
+
+      # Run tests 3 times to confirm stability before shipping
+      - name: Run production tests (pass 1)
         run: npm run test:all
-      
+
+      - name: Run production tests (pass 2)
+        run: npm run test:all
+
+      - name: Run production tests (pass 3)
+        run: npm run test:all
+
       - name: Build application
         run: npm run build
-      
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Run Supabase database migrations
+        # SUPABASE_ACCESS_TOKEN must be a personal access token from https://app.supabase.com/account/tokens
+        # The linked project is determined by supabase/config.toml (project_id field) set at link time.
+        # Set SUPABASE_PROJECT_ID secret and run `supabase link --project-ref $SUPABASE_PROJECT_ID` locally first.
+        run: supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
       - name: Docker login
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:${{ github.ref_name }}
             ghcr.io/${{ github.repository }}:latest
-      
+
       - name: Deploy to Kubernetes
         run: |
           echo "Deploying to Kubernetes..."
           # kubectl set image deployment/jga-os jga-os=ghcr.io/${{ github.repository }}:${{ github.ref_name }}
         env:
           KUBECONFIG: ${{ secrets.KUBECONFIG }}
-      
+
       - name: Notify deployment
         if: success()
         run: echo "✅ Production deployment successful for ${{ github.ref_name }}"
