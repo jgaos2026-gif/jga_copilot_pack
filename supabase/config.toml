@@ -1,0 +1,76 @@
+# Supabase local dev configuration
+# Generated for JGA Enterprise OS
+# See: https://supabase.com/docs/guides/cli/config
+
+[api]
+# Port the local Supabase API server listens on.
+port = 54321
+# Schemas to expose in the API. Tables, views, and stored procedures in this
+# schema will be accessible via the generated REST API.
+schemas = ["public", "graphql_public"]
+# Schemas to exclude from the API. Useful for internal schemas.
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+# Port the local Postgres DB listens on.
+port = 54322
+# Port used by pg_bouncer connection pooler.
+pooler_port = 54329
+major_version = 15
+
+[db.pooler]
+enabled = false
+default_pool_size = 20
+max_client_conn = 100
+
+[realtime]
+enabled = true
+ip_version = "IPv4"
+
+[studio]
+enabled = true
+# Port the local Studio UI listens on.
+port = 54323
+# JWT secret used to sign Studio access tokens.
+# Do not change this in production; use the value from your Supabase project.
+api_url = "http://localhost"
+# Optional: enables AI-assisted SQL query generation in Studio UI.
+# Set OPENAI_API_KEY in your shell environment, or leave this line commented out.
+openai_api_key = "env(OPENAI_API_KEY)"
+
+[inbucket]
+enabled = true
+port = 54324
+
+[storage]
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+# The base URL for the auth service. This should match your app URL.
+site_url = "http://localhost:3000"
+# List of redirect URLs allowed for authentication.
+additional_redirect_urls = ["https://localhost:3000"]
+# How long a JWT stays valid (seconds). Default 3600 (1 hour).
+jwt_expiry = 3600
+# Allow/disallow new user registrations to your project.
+enable_signup = true
+enable_anonymous_sign_ins = false
+minimum_password_length = 8
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = false
+
+[auth.sms]
+enable_signup = false
+
+[edge_runtime]
+enabled = true
+policy = "oneshot"
+
+[analytics]
+enabled = false

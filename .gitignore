@@ -33,8 +33,9 @@ Thumbs.db
 .env.local
 .env.*.local
 
-# IDE
-.vscode/
+# IDE – keep .vscode workspace settings committed; ignore personal overrides only
+.vscode/*.code-snippets
+.vscode/launch.json
 .idea/
 *.swp
 *.swo

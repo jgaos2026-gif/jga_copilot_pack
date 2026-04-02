@@ -84,6 +84,7 @@
   
   // Terminal
   "terminal.integrated.fontSize": 12,
+  "terminal.integrated.defaultProfile.osx": "zsh",
   "terminal.integrated.defaultProfile.windows": "PowerShell",
   
   // Theme & Appearance
