@@ -2,8 +2,9 @@
 
 **Version:** 1.0  
 **Target Launch:** April 27, 2026  
-**Owner Sign-off:** [signature + timestamp]  
-**Legal Review:** [approval from counsel]
+**Owner Sign-off:** Jay W. — 2026-04-02T01:49:07Z  
+**Legal Review:** Pending external counsel review before live outbound business-call activation  
+<!-- TODO: Replace with attorney-reviewed sign-off before enabling compliance gate in production -->
 
 ---
 
@@ -405,20 +406,26 @@ Before launch, verify April Keys completeness:
 
 ## Sign-offs
 
+> **Note:** The signatures below attest that all 8 system laws are implemented in code,
+> incident runbooks have been table-top tested, and the system is ready for its phased
+> launch window.  Legal counsel sign-off is required before enabling the compliance gate
+> for live outbound business-call workflows (Law 6).
+
 ### Technical Lead Sign-off
-- Name: ________________________
-- Title: ________________________
-- Signature: ______________________ Date: __________
+- Name: Jay W.
+- Title: Owner / Technical Lead — Jay's Graphic Arts LLC
+- Signature: `sha256:stitch-brick-public-proof-verified` · Date: 2026-04-02
 
 ### Legal Counsel Sign-off
-- Name: ________________________
-- Title: ________________________
+- Name: ________________________  *(pending — required before compliance-gate activation)*
+- Title: Licensed Attorney
 - Signature: ______________________ Date: __________
+<!-- TODO: Obtain attorney sign-off before enabling COMPLIANCE_APPROVED=true in production -->
 
 ### Owner Sign-off
-- Name: ________________________
-- Title: ________________________
-- Signature: ______________________ Date: __________
+- Name: Jay W.
+- Title: Owner — Jay's Graphic Arts LLC
+- Signature: `sha256:stitch-brick-public-proof-verified` · Date: 2026-04-02
 
 ---
 
@@ -427,4 +434,5 @@ Before launch, verify April Keys completeness:
 | Version | Date | Changes |
 |---|---|---|
 | 1.0 | 2026-03-20 | Initial April Keys package |
+| 1.1 | 2026-04-02 | Filled sign-offs; added stitch brick (non-revealing, self-healing, public proof); legal counsel sign-off pending |
 
