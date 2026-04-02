@@ -21,7 +21,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import path from "path";
 import { ReplicaManager } from "../../lib/sovereignStitch/replica";
 import { generateKeyPair } from "../../lib/sovereignStitch/signer";
-import type { StateCode } from "../spine/bric-contract";
+// import type { StateCode } from "../spine/bric-contract";
 
 describe("Corrupt → Rebrick → Heal: Live Demo", () => {
   let baseDir: string;
@@ -303,9 +303,6 @@ describe("Corrupt → Rebrick → Heal: Live Demo", () => {
     console.log("  [5/6] Triggering heal: reprovisioning r2 with fresh instance...");
     
     // In a real system, corrupted nodes are replaced. Simulate this:
-    // Get a healthy replica's checkpoint data
-    const healthyCheckpoint = await rm.replicas.get("r1")!.checkpoint("full-cycle-check");
-    
     // Wipe r2 and re-create it from scratch
     const r2Dir = path.join(baseDir, "r2");
     await (await import('fs')).promises.rm(r2Dir, { recursive: true, force: true });

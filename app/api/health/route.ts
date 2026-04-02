@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * Health Check Endpoint
  * Used for monitoring and liveness probes
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     return NextResponse.json(
       {

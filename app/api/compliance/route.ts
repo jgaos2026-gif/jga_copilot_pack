@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 
 /**
  * Compliance Status Endpoint
  * Returns compliance gate status and system health indicators
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     return NextResponse.json(
       {

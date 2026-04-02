@@ -1,0 +1,58 @@
+
+> jga-enterprise-os@1.0.0 type-check
+> tsc --noEmit
+
+__tests__/integration.test.ts(212,19): error TS6133: 'error' is declared but its value is never read.
+__tests__/integration.test.ts(383,29): error TS2345: Argument of type '(event: Event) => void' is not assignable to parameter of type 'EventHandler'.
+  Type 'void' is not assignable to type 'Promise<void>'.
+__tests__/integration.test.ts(416,11): error TS6133: 'eventsBefore' is declared but its value is never read.
+__tests__/integration.test.ts(440,45): error TS2339: Property 'getDLQEvents' does not exist on type 'EventBus'.
+__tests__/integration.test.ts(447,43): error TS2339: Property 'getDLQEvents' does not exist on type 'EventBus'.
+__tests__/integration.test.ts(461,7): error TS2353: Object literal may only specify known properties, and 'certFile' does not exist in type 'mTLSConfig'.
+__tests__/integration.test.ts(470,7): error TS2353: Object literal may only specify known properties, and 'certFile' does not exist in type 'mTLSConfig'.
+__tests__/integration.test.ts(516,21): error TS2339: Property 'correlationId' does not exist on type 'RpcResponse'.
+__tests__/integration.test.ts(516,47): error TS2339: Property 'meta' does not exist on type 'RpcResponse'.
+app/(auth)/login/page.tsx(4,18): error TS2307: Cannot find module 'next/link' or its corresponding type declarations.
+app/(auth)/login/page.tsx(5,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+app/(auth)/register/page.tsx(4,18): error TS2307: Cannot find module 'next/link' or its corresponding type declarations.
+app/(auth)/register/page.tsx(5,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+app/(dashboard)/layout.tsx(3,18): error TS2307: Cannot find module 'next/link' or its corresponding type declarations.
+app/(dashboard)/layout.tsx(4,27): error TS2307: Cannot find module 'next/navigation' or its corresponding type declarations.
+app/api/auth/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/api/auth/route.ts(16,7): error TS6133: 'registerSchema' is declared but its value is never read.
+app/api/compliance/route.ts(1,34): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/api/compliance/route.ts(2,30): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/api/contractors/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/api/contractors/route.ts(13,27): error TS6133: 'request' is declared but its value is never read.
+app/api/contracts/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/api/handlers.ts(6,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/api/handlers.ts(225,40): error TS6133: 'req' is declared but its value is never read.
+app/api/handlers.ts(455,36): error TS6133: 'req' is declared but its value is never read.
+app/api/health/route.ts(1,34): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/api/health/route.ts(2,30): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/api/projects/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/api/transactions/route.ts(1,43): error TS2307: Cannot find module 'next/server' or its corresponding type declarations.
+app/layout.tsx(1,31): error TS2307: Cannot find module 'next' or its corresponding type declarations.
+app/page.tsx(1,18): error TS2307: Cannot find module 'next/link' or its corresponding type declarations.
+brics/demo/corrupt-heal.test.ts(24,1): error TS6133: 'StateCode' is declared but its value is never read.
+brics/demo/corrupt-heal.test.ts(24,32): error TS2307: Cannot find module '../spine/bric-contract' or its corresponding type declarations.
+brics/demo/corrupt-heal.test.ts(307,11): error TS6133: 'healthyCheckpoint' is declared but its value is never read.
+brics/owners-room/index.ts(6,10): error TS2300: Duplicate identifier 'createClient'.
+brics/owners-room/index.ts(6,24): error TS2300: Duplicate identifier 'SupabaseClient'.
+brics/owners-room/index.ts(7,10): error TS2300: Duplicate identifier 'createClient'.
+brics/owners-room/index.ts(7,24): error TS2300: Duplicate identifier 'SupabaseClient'.
+brics/owners-room/index.ts(31,11): error TS6133: 'rpcClients' is declared but its value is never read.
+lib/inter-bric-rpc/index.ts(180,11): error TS6133: 'config' is declared but its value is never read.
+lib/realtime/index.ts(194,41): error TS2367: This comparison appears to be unintentional because the types '"contractor" | "customer"' and '"owner"' have no overlap.
+scripts/go-live.ts(190,13): error TS6133: 'exists' is declared but its value is never read.
+scripts/go-live.ts(210,13): error TS6133: 'exists' is declared but its value is never read.
+scripts/load-test.ts(11,1): error TS6133: 'SystemBBric' is declared but its value is never read.
+scripts/load-test.ts(12,23): error TS6133: 'BRICSOrchestrator' is declared but its value is never read.
+scripts/load-test.ts(12,48): error TS2307: Cannot find module '../brics/orchestrator' or its corresponding type declarations.
+scripts/security-audit.ts(19,29): error TS2307: Cannot find module '../brics/orchestrator' or its corresponding type declarations.
+scripts/security-audit.ts(82,11): error TS6133: 'filesToCheck' is declared but its value is never read.
+scripts/security-audit.ts(241,11): error TS6133: 'tlsEnabled' is declared but its value is never read.
+scripts/security-audit.ts(307,52): error TS7006: Parameter 't' implicitly has an 'any' type.
+scripts/security-audit.ts(314,47): error TS7006: Parameter 't' implicitly has an 'any' type.
+scripts/security-audit.ts(318,85): error TS7006: Parameter 't' implicitly has an 'any' type.
+scripts/verify-laws.ts(3,7): error TS6133: 'anthropic' is declared but its value is never read.
