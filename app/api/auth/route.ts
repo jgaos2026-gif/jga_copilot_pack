@@ -1,12 +1,7 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getSupabaseClient } from '@/lib/supabase-client';
 
 // Validation schemas
 const loginSchema = z.object({
@@ -14,16 +9,57 @@ const loginSchema = z.object({
   password: z.string().min(6),
 });
 
+const registerSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+  fullName: z.string().min(1),
+  role: z.enum(['contractor', 'customer', 'admin']).default('contractor'),
+  stateCode: z.string().length(2).optional(),
+});
+
 /**
- * POST /api/auth/login
- * User login endpoint
+ * POST /api/auth/login or /api/auth/register
+ * Dispatches based on action field in the body.
+ * Login: { action: 'login', email, password }
+ * Register: { action: 'register', email, password, fullName, role, stateCode }
  */
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await request.json();
+    const { action } = body;
+
+    if (action === 'register') {
+      const { email, password, fullName, role, stateCode } =
+        registerSchema.parse(body);
+
+      const { data, error } = await supabase.auth.signUp({ email, password });
+
+      if (error) {
+        return NextResponse.json({ error: error.message }, { status: 400 });
+      }
+
+      // Insert user profile
+      if (data.user) {
+        await supabase.from('users').insert({
+          id: data.user.id,
+          email,
+          full_name: fullName,
+          role,
+          state_code: stateCode ?? null,
+          created_at: new Date().toISOString(),
+        });
+      }
+
+      return NextResponse.json(
+        { success: true, user: data.user },
+        { status: 201 }
+      );
+    }
+
+    // Default: login
     const { email, password } = loginSchema.parse(body);
 
-    // Authenticate user
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -55,8 +91,9 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const token = request.headers.get('authorization')?.split(' ')[1];
-    
+
     if (token) {
       await supabase.auth.signOut();
     }
