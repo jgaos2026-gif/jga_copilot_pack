@@ -5,14 +5,9 @@
 
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
+import { getSupabaseClient } from '@/lib/supabase-client';
 import { eventBus, createEvent, EventTopics } from '@/lib/event-system';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 // Input validation schemas
 const intakeSchema = z.object({
@@ -102,6 +97,7 @@ export async function handleIntake(req: NextRequest) {
  */
 export async function handleCreateCustomer(req: NextRequest, state: string) {
   try {
+    const supabase = getSupabaseClient();
     const auth = req.headers.get('authorization');
     if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -161,6 +157,7 @@ export async function handleCreateCustomer(req: NextRequest, state: string) {
  */
 export async function handleCreateProject(req: NextRequest, state: string) {
   try {
+    const supabase = getSupabaseClient();
     const auth = req.headers.get('authorization');
     if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -223,8 +220,9 @@ export async function handleCreateProject(req: NextRequest, state: string) {
  * GET /api/state-[state]/projects/[id]
  * Get project details
  */
-export async function handleGetProject(req: NextRequest, state: string, id: string) {
+export async function handleGetProject(_req: NextRequest, state: string, id: string) {
   try {
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -255,6 +253,7 @@ export async function handleGetProject(req: NextRequest, state: string, id: stri
  */
 export async function handleRecordTransaction(req: NextRequest, state: string) {
   try {
+    const supabase = getSupabaseClient();
     const auth = req.headers.get('authorization');
     if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -324,6 +323,7 @@ export async function handleRecordTransaction(req: NextRequest, state: string) {
  */
 export async function handlePaymentWebhook(req: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await req.json();
 
     // Verify webhook signature
@@ -387,6 +387,7 @@ export async function handlePaymentWebhook(req: NextRequest) {
  */
 export async function handleLogin(req: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const { email, password } = await req.json();
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -420,6 +421,7 @@ export async function handleLogin(req: NextRequest) {
  */
 export async function handleMfaVerify(req: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const { userId, totpToken } = await req.json();
 
     // TODO: Verify TOTP token against user's secret
@@ -453,7 +455,7 @@ export async function handleMfaVerify(req: NextRequest) {
  * GET /api/health
  * Health check endpoint
  */
-export async function handleHealth(req: NextRequest) {
+export async function handleHealth(_req: NextRequest) {
   return NextResponse.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),

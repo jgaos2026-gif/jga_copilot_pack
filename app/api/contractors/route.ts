@@ -1,11 +1,8 @@
+import { getSupabaseClient } from '@/lib/supabase-client';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+
 
 /**
  * GET /api/contractors
@@ -13,6 +10,7 @@ const supabase = createClient(
  */
 export async function GET() {
   try {
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('users')
       .select('*')
@@ -40,6 +38,7 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await request.json();
     const { email, fullName, stateCode, licenseNumber } = body;
 

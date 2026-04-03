@@ -1,14 +1,14 @@
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
-
-export const metadata = {
-  title: 'JGA Enterprise OS',
-  description: 'Enterprise Operating System for Secure Business Operations',
-};
 
 export const metadata: Metadata = {
   title: 'JGA Enterprise OS',
   description: 'Enterprise Operating System for JGA',
-  viewport: 'width=device-width, initial-scale=1',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({

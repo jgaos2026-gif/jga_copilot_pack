@@ -7,6 +7,6 @@ const nextConfig = {
   eslint: {
     dirs: ['app', 'components', 'lib', 'tests'],
   },
-}
+};
 
-module.exports = nextConfig
+export default nextConfig;
