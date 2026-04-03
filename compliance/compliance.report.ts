@@ -80,12 +80,13 @@ export class ComplianceReporter {
   }
 
   private currentPeriod(): string {
-    const now = new Date();
-    const year = now.getFullYear();
-    const week = Math.ceil(
-      (now.getDate() + new Date(year, now.getMonth(), 1).getDay()) / 7,
-    );
-    return `${year}-W${String(week).padStart(2, '0')}`;
+    // ISO 8601 week number: week containing the first Thursday of the year is week 1
+    const now = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));
+    const dayOfWeek = now.getUTCDay() === 0 ? 7 : now.getUTCDay(); // Mon=1 … Sun=7
+    now.setUTCDate(now.getUTCDate() + 4 - dayOfWeek); // nearest Thursday
+    const yearStart = new Date(Date.UTC(now.getUTCFullYear(), 0, 1));
+    const week = Math.ceil(((now.getTime() - yearStart.getTime()) / 86_400_000 + 1) / 7);
+    return `${now.getUTCFullYear()}-W${String(week).padStart(2, '0')}`;
   }
 }
 
