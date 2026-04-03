@@ -1,0 +1,92 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev: start Next.js",
+      "type": "shell",
+      "command": "npm run dev",
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "dedicated" },
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": { "regexp": "." },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "starting|compiling",
+          "endsPattern": "ready|compiled"
+        }
+      }
+    },
+    {
+      "label": "build: Next.js production",
+      "type": "shell",
+      "command": "npm run build",
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always" }
+    },
+    {
+      "label": "test: run all",
+      "type": "shell",
+      "command": "npm run test:run",
+      "group": { "kind": "test", "isDefault": true },
+      "presentation": { "reveal": "always" }
+    },
+    {
+      "label": "test: watch",
+      "type": "shell",
+      "command": "npm test",
+      "group": "test",
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "lint: check",
+      "type": "shell",
+      "command": "npm run lint",
+      "group": "build",
+      "presentation": { "reveal": "always" }
+    },
+    {
+      "label": "lint: fix",
+      "type": "shell",
+      "command": "npm run lint:fix",
+      "group": "build",
+      "presentation": { "reveal": "always" }
+    },
+    {
+      "label": "typecheck",
+      "type": "shell",
+      "command": "npm run type-check",
+      "group": "build",
+      "presentation": { "reveal": "always" }
+    },
+    {
+      "label": "supabase: start local",
+      "type": "shell",
+      "command": "bash scripts/supabase-dev.sh start",
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "supabase: stop local",
+      "type": "shell",
+      "command": "bash scripts/supabase-dev.sh stop",
+      "group": "build",
+      "presentation": { "reveal": "always" }
+    },
+    {
+      "label": "supabase: reset local DB",
+      "type": "shell",
+      "command": "bash scripts/supabase-dev.sh reset",
+      "group": "build",
+      "presentation": { "reveal": "always" }
+    },
+    {
+      "label": "supabase: status",
+      "type": "shell",
+      "command": "supabase status",
+      "group": "build",
+      "presentation": { "reveal": "always" }
+    }
+  ]
+}
