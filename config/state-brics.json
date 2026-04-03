@@ -1,0 +1,33 @@
+{
+  "_comment": "JGA Enterprise OS — State BRIC Configuration. See ARCHITECTURE_BRICKS_STITCH.md § 2.3",
+  "_rules": [
+    "Each entry maps a state tag to its BRIC runtime configuration.",
+    "kmsKeyId and iamPrincipal MUST be set via environment/secrets management before go-live.",
+    "active=false means the BRIC is provisioned but not yet accepting work.",
+    "New entries require Compliance Agent approval (GATE-05) before active=true."
+  ],
+  "stateBrics": [
+    {
+      "tag": "IL-01",
+      "name": "Illinois",
+      "dbSchema": "state_il",
+      "kmsKeyId": "${STATE_IL_KMS_KEY_ID}",
+      "iamPrincipal": "${STATE_IL_IAM_PRINCIPAL}",
+      "retentionYears": 5,
+      "sectionalLawRef": "SECTIONAL_LAWS.md § 1.1",
+      "active": false,
+      "notes": "TODO: attorney/CPA review for BIPA compliance before activation."
+    },
+    {
+      "tag": "TX-44",
+      "name": "Texas",
+      "dbSchema": "state_tx",
+      "kmsKeyId": "${STATE_TX_KMS_KEY_ID}",
+      "iamPrincipal": "${STATE_TX_IAM_PRINCIPAL}",
+      "retentionYears": 4,
+      "sectionalLawRef": "SECTIONAL_LAWS.md § 1.2",
+      "active": false,
+      "notes": "TODO: attorney/CPA review for TX-specific contractor law before activation."
+    }
+  ]
+}
