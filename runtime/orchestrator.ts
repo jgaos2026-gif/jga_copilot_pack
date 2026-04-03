@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import { auditLog, type AuditLog } from './audit-log.js';
 import { escalationEngine, type EscalationEngine } from './escalation.js';
 import { approvalQueue, type ApprovalQueue } from './approvals.js';
@@ -48,7 +49,7 @@ export class RuntimeOrchestrator {
       });
 
       this.bus.publish({
-        messageId: crypto.randomUUID(),
+        messageId: randomUUID(),
         fromAgent: 'Owner',
         toAgent: 'AdminAgent',
         channel: 'escalation',

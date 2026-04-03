@@ -1,6 +1,6 @@
 import { randomUUID, createHash } from 'crypto';
 
-export interface Record {
+export interface WormRecord {
   recordId: string;
   stateTag: string;
   recordType: string;
@@ -10,14 +10,14 @@ export interface Record {
 }
 
 export class RecordsService {
-  private store: Map<string, Record> = new Map();
+  private store: Map<string, WormRecord> = new Map();
 
-  write(input: { stateTag: string; recordType: string; content: Record<string, unknown> }): Record {
+  write(input: { stateTag: string; recordType: string; content: Record<string, unknown> }): WormRecord {
     const recordId = randomUUID();
     const createdAt = new Date().toISOString();
     const hash = this.computeHash(input.content);
 
-    const record: Record = {
+    const record: WormRecord = {
       recordId,
       stateTag: input.stateTag,
       recordType: input.recordType,
@@ -30,12 +30,12 @@ export class RecordsService {
     return { ...record };
   }
 
-  read(recordId: string): Record | undefined {
+  read(recordId: string): WormRecord | undefined {
     const record = this.store.get(recordId);
     return record ? { ...record } : undefined;
   }
 
-  readByState(stateTag: string): Record[] {
+  readByState(stateTag: string): WormRecord[] {
     return [...this.store.values()]
       .filter((r) => r.stateTag === stateTag)
       .map((r) => ({ ...r }));

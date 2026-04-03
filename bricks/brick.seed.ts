@@ -8,7 +8,7 @@ export function seedBricks(service: BrickService): Brick[] {
     name: 'Illinois Client Policy',
     description:
       'Defines client engagement policies, acceptable payment methods, and SLA commitments for Illinois jurisdiction.',
-    metadata: { jurisdiction: 'Illinois', effectiveYear: 2024 },
+    metadata: { jurisdiction: 'Illinois', effectiveYear: new Date().getFullYear() },
   });
 
   const texasLedger = service.createBrick({

@@ -27,6 +27,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "lib/**/*.ts", "lib/**/*.tsx", "tests/**/*.ts", "app/**/*.ts", "app/**/*.tsx", "__tests__/**/*.ts", "scripts/**/*.ts", "brics/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "lib/**/*.ts", "lib/**/*.tsx", "tests/**/*.ts", "app/**/*.ts", "app/**/*.tsx", "__tests__/**/*.ts", "scripts/**/*.ts", "brics/**/*.ts", "bricks/**/*.ts", "stitch/**/*.ts", "agents/**/*.ts", "runtime/**/*.ts", "records/**/*.ts", "billing/**/*.ts", "compliance/**/*.ts"],
   "exclude": ["node_modules"]
 }
