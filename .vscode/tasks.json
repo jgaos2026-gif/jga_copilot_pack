@@ -1,0 +1,53 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev",
+      "type": "npm",
+      "script": "dev",
+      "group": "build",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "build",
+      "type": "npm",
+      "script": "build",
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "test",
+      "type": "npm",
+      "script": "test:run",
+      "group": { "kind": "test", "isDefault": true },
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "seed",
+      "type": "shell",
+      "command": "npx ts-node scripts/seed.ts",
+      "group": "none",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "lint",
+      "type": "npm",
+      "script": "lint",
+      "group": "none",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": []
+    },
+    {
+      "label": "type-check",
+      "type": "npm",
+      "script": "type-check",
+      "group": "none",
+      "presentation": { "reveal": "always", "panel": "shared" },
+      "problemMatcher": "$tsc"
+    }
+  ]
+}

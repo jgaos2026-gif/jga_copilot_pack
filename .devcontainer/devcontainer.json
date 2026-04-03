@@ -1,0 +1,26 @@
+{
+  "name": "JGA Enterprise OS",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:20",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "20" },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "npm install",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "bradlc.tailwind-css-intellisense",
+        "ms-vscode.vscode-typescript-next",
+        "vitest.explorer",
+        "supabase.supabase-vscode",
+        "eamodio.gitlens",
+        "usernamehw.errorlens",
+        "streetsidesoftware.code-spell-checker"
+      ]
+    }
+  },
+  "forwardPorts": [3000, 54321],
+  "remoteUser": "node"
+}

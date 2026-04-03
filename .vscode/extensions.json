@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.tailwind-css-intellisense",
+    "ms-vscode.vscode-typescript-next",
+    "vitest.explorer",
+    "supabase.supabase-vscode",
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}
