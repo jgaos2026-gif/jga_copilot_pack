@@ -12,15 +12,24 @@ const mfaVerifySchema = z.object({
  * POST /api/auth/mfa-verify
  * Verify a TOTP token for MFA (Law #5: Owners Room Requires MFA)
  *
- * TODO: In production, verify the TOTP token against the user's secret
- *       stored in a secure vault (e.g., AWS Secrets Manager).
+ * ⚠️  SECURITY TODO (requires attorney/CPA review before go-live):
+ *   This endpoint currently only validates the 6-digit format and then records
+ *   the verification timestamp. It does NOT validate the TOTP token against a
+ *   stored secret — providing no cryptographic MFA guarantee.
+ *
+ *   Before production activation:
+ *   1. Store a per-user TOTP secret in AWS Secrets Manager (or equivalent vault).
+ *   2. Use a TOTP library (e.g., `otplib`) to verify `totpToken` against the secret.
+ *   3. Only record `mfa_verified_at` when the cryptographic check passes.
+ *   4. Rate-limit failed attempts to prevent brute-force.
  */
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { userId, totpToken } = mfaVerifySchema.parse(body);
 
-    // Validate token format (6-digit numeric)
+    // CRITICAL: This only checks format. Real TOTP validation against a stored
+    // secret is required before enabling this in production (see TODO above).
     const isValidFormat = /^\d{6}$/.test(totpToken);
 
     if (!isValidFormat) {

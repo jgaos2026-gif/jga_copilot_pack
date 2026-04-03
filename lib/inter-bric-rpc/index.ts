@@ -54,8 +54,14 @@ const rpcPolicies: Record<string, string[]> = {
 };
 
 /**
- * mTLS configuration for inter-BRIC cert setup
- * Accepts both *Path and *File property names for flexibility.
+ * mTLS configuration for inter-BRIC cert setup.
+ *
+ * Accepts either path-based (`certPath`/`keyPath`/`caPath`) or
+ * file-based (`certFile`/`keyFile`/`caFile`) naming for flexibility.
+ * At least one complete set must be provided when making real mTLS calls.
+ *
+ * TODO: Enforce at least one complete set via discriminated union before
+ *       enabling mTLS in production.
  */
 export interface mTLSConfig {
   serviceName?: string;
@@ -193,7 +199,9 @@ export class RpcServer {
   private handlers: Map<string, (params: any) => Promise<any>> = new Map();
 
   constructor(_config: mTLSConfig = {}) {
-    // Config reserved for future mTLS server setup
+    // TODO: When deploying production mTLS server, wire config to an HTTPS server
+    //       that terminates mTLS using the provided cert/key/ca paths.
+    //       Reference: lib/inter-bric-rpc/index.ts mTLSConfig for field details.
   }
 
   /**
