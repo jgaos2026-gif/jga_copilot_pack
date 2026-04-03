@@ -98,7 +98,7 @@ export default function Home() {
           &copy; {new Date().getFullYear()} Jay&apos;s Graphic Arts LLC. All rights reserved.
         </span>
         <span className="text-yellow-700">
-          JGA Enterprise OS &mdash; built on Next.js &amp; Supabase
+          JGA Enterprise OS — built on Next.js & Supabase
         </span>
       </footer>
     </main>
