@@ -336,3 +336,75 @@ This is a closed-source enterprise project. For team contributions, follow chang
 ---
 
 **Version:** 1.0.0 | **Updated:** March 20, 2026 | **Status:** 🟢 Production Ready | **Launch:** April 27, 2026
+
+
+---
+
+## Architecture Overview
+
+### Brick System
+
+Every record in JGA Enterprise OS is a **Brick** — a typed, versioned, append-only unit of data.
+
+| Field | Description |
+|-------|-------------|
+| `brickId` | Immutable UUID assigned at creation |
+| `brickType` | One of `PolicyBrick`, `ProcessBrick`, `OpsBrick`, `LedgerBrick`, `ComplianceBrick`, `ContractBrick`, `RecordBrick`, `AgentBrick` |
+| `stateTag` | Jurisdiction tag (e.g. `IL-01`, `TX-44`, `US-FED`) |
+| `lifecycle` | `draft` → `active` → `suspended` → `archived` |
+| `version` | Increments on every update; prior versions are never deleted |
+
+Updates never mutate existing rows — a new version entry is appended to the store. `getBrickHistory(brickId)` returns all versions in chronological order.
+
+### Agent Chain of Command
+
+Agents operate within a strict authority hierarchy. Every agent has an explicit `canDo` and `cannotDo` scope enforced by `AgentOrchestrator.validateAuthority()`.
+
+```
+Owner
+  └── AdminAgent
+        ├── CFOAgent         (finance channel, escalates >$100)
+        │     └── VendorPayAgent  (vendor channel, escalates >$50)
+        ├── OpsAgent          (ops channel)
+        ├── ComplianceAgent   (compliance channel)
+        └── RecordsAgent      (records channel)
+```
+
+Actions outside an agent's `canDo` list are rejected and escalated to `Owner`. Contractors map to `VendorPayAgent` authority — they cannot modify pricing, contracts, payout rules, or owner/admin settings.
+
+### Running Locally
+
+```bash
+# Install dependencies
+npm install
+
+# Start the Next.js dev server
+npm run dev           # http://localhost:3000
+
+# Run all tests
+npm run test:run
+
+# Type-check without emitting
+npm run type-check
+
+# Lint
+npm run lint
+```
+
+### Key Directories
+
+| Directory | Purpose |
+|-----------|---------|
+| `/bricks` | Brick types, schema, and append-only BrickService |
+| `/stitch` | StitchService — typed edges between bricks (DAG validation, circular-dep detection) |
+| `/agents` | Agent definitions, AgentBus, AgentOrchestrator |
+| `/runtime` | AuditLog (append-only), ApprovalQueue, shared runtime singletons |
+| `/billing` | BillIntake → BillApproval → BillPay pipeline |
+| `/compliance` | ComplianceChecker — enforces all 10 business rules |
+| `/constitution` | Governance laws and policy documents |
+| `/records` | Record-keeping services |
+| `/lib` | Shared utilities including the pricing engine |
+| `/src` | Next.js app (pages, components, server actions) |
+| `/tests` | Vitest test suite — no Supabase required for unit tests |
+| `/supabase` | Migrations, RLS policies, seed data |
+| `/k8s` | Kubernetes manifests for production deployment |
