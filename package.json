@@ -11,6 +11,8 @@
     "test:consensus": "vitest tests/sovereign-stitch-consensus.test.ts --run",
     "test:raft-3node": "vitest tests/sovereign-stitch-raft-3node-demo.test.ts --run",
     "test:demo": "vitest brics/demo/corrupt-heal.test.ts --run",
+    "test:braintech": "vitest brics/demo/braintech-85pct.test.ts --run",
+    "braintech": "python3 scripts/braintech.py",
     "test:integration": "vitest __tests__/integration.test.ts --run",
     "test:all": "vitest run",
     "test:ui": "vitest --ui",
