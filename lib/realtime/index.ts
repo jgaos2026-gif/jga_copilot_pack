@@ -188,11 +188,10 @@ export class RealtimeServer {
    * Check if client can subscribe to topic
    */
   private checkSubscriptionAuth(client: WebSocketClient, topic: string): boolean {
-    const roleStr = String(client.role);
-    if (roleStr === 'owner') return true; // Owners see all
+    if (client.role === 'owner') return true; // Owners see all
 
     if (topic.includes('admin') || topic.includes('compliance')) {
-      return roleStr === 'admin' || roleStr === 'owner';
+      return client.role === 'admin';
     }
 
     if (topic.includes(client.stateCode || '')) {

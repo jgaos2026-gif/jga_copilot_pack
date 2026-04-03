@@ -3,10 +3,8 @@
  * Administrative control plane with MFA + Dual-Auth (Law #5)
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { eventBus, EventTopics, createEvent } from '../../lib/event-system';
-import { RpcClient } from '../../lib/inter-bric-rpc';
 
 export interface OwnersRoomConfig {
   supabaseUrl: string;
@@ -28,7 +26,6 @@ export interface AdminUser {
  */
 export class OwnersRoom {
   private db: SupabaseClient;
-  // private rpcClients: Map<string, RpcClient> = new Map();
   private auditLog: any[] = [];
 
   constructor(config: OwnersRoomConfig) {
@@ -313,6 +310,34 @@ export class OwnersRoom {
     if (this.auditLog.length > 10000) {
       this.auditLog = this.auditLog.slice(-5000);
     }
+  }
+
+  /**
+   * Audit Owners Room security posture (MFA & dual-auth enforcement)
+   */
+  async auditOwnersRoomSecurity(): Promise<{ ok: boolean; violations: string[] }> {
+    const violations: string[] = [];
+    try {
+      const { data: adminUsers, error } = await this.db
+        .from('user_roles')
+        .select('user_id, role, mfa_enabled')
+        .in('role', ['owner', 'admin']);
+
+      if (error) {
+        violations.push(`Failed to check admin MFA: ${error.message}`);
+        return { ok: false, violations };
+      }
+
+      for (const user of adminUsers || []) {
+        if (!user.mfa_enabled) {
+          violations.push(`User ${user.user_id} (${user.role}) does not have MFA enabled`);
+        }
+      }
+    } catch (error) {
+      violations.push(`Security audit failed: ${String(error)}`);
+    }
+
+    return { ok: violations.length === 0, violations };
   }
 
   /**

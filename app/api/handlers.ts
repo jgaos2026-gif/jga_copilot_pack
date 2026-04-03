@@ -5,14 +5,9 @@
 
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 import { eventBus, createEvent, EventTopics } from '@/lib/event-system';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getSupabaseClient } from '@/lib/supabase-client';
 
 // Input validation schemas
 const intakeSchema = z.object({
@@ -111,7 +106,7 @@ export async function handleCreateCustomer(req: NextRequest, state: string) {
     const customer = customerSchema.parse(body);
 
     // Insert into state schema
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from('customers')
       .insert({
         state_code: state,
@@ -169,7 +164,7 @@ export async function handleCreateProject(req: NextRequest, state: string) {
     const body = await req.json();
     const project = projectSchema.parse(body);
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from('projects')
       .insert({
         state_code: state,
@@ -223,9 +218,9 @@ export async function handleCreateProject(req: NextRequest, state: string) {
  * GET /api/state-[state]/projects/[id]
  * Get project details
  */
-export async function handleGetProject(req: NextRequest, state: string, id: string) {
+export async function handleGetProject(_req: NextRequest, state: string, id: string) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from('projects')
       .select('*')
       .eq('id', id)
@@ -263,7 +258,7 @@ export async function handleRecordTransaction(req: NextRequest, state: string) {
     const body = await req.json();
     const tx = transactionSchema.parse(body);
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from('transactions')
       .insert({
         state_code: state,
@@ -285,7 +280,7 @@ export async function handleRecordTransaction(req: NextRequest, state: string) {
 
     // Update project deposit status if deposit
     if (tx.type === 'deposit') {
-      await supabase
+      await getSupabaseClient()
         .from('projects')
         .update({ deposit_status: 'confirmed' })
         .eq('id', tx.project_id);
@@ -340,7 +335,7 @@ export async function handlePaymentWebhook(req: NextRequest) {
     const { transaction_id, amount, project_id, state_code } = body;
 
     // Record transaction
-    const { error } = await supabase
+    const { error } = await getSupabaseClient()
       .from('transactions')
       .insert({
         state_code,
@@ -389,7 +384,7 @@ export async function handleLogin(req: NextRequest) {
   try {
     const { email, password } = await req.json();
 
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await getSupabaseClient().auth.signInWithPassword({
       email,
       password,
     });
@@ -434,7 +429,7 @@ export async function handleMfaVerify(req: NextRequest) {
     }
 
     // Mark user as MFA-verified (4 hour window)
-    await supabase
+    await getSupabaseClient()
       .from('user_roles')
       .update({ mfa_verified_at: new Date().toISOString() })
       .eq('user_id', userId);
@@ -453,7 +448,7 @@ export async function handleMfaVerify(req: NextRequest) {
  * GET /api/health
  * Health check endpoint
  */
-export async function handleHealth(req: NextRequest) {
+export async function handleHealth(_req: NextRequest) {
   return NextResponse.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),

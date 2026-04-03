@@ -22,6 +22,8 @@ export interface RpcResponse {
   error?: string;
   requestId: string;
   timestamp: string;
+  correlationId?: string;
+  meta?: Record<string, string>;
 }
 
 /**
@@ -53,12 +55,16 @@ const rpcPolicies: Record<string, string[]> = {
 
 /**
  * mTLS configuration for inter-BRIC cert setup
+ * Accepts both *Path and *File property names for flexibility.
  */
 export interface mTLSConfig {
-  serviceName: string;
-  certPath: string;
-  keyPath: string;
-  caPath: string;
+  serviceName?: string;
+  certPath?: string;
+  keyPath?: string;
+  caPath?: string;
+  certFile?: string;
+  keyFile?: string;
+  caFile?: string;
 }
 
 /**
@@ -83,15 +89,17 @@ export class RpcClient {
     correlationId?: string
   ): Promise<RpcResponse> {
     // Policy check: default DENY
-    const allowedTargets = rpcPolicies[this.config.serviceName];
+    const serviceName = this.config.serviceName || '';
+    const allowedTargets = rpcPolicies[serviceName];
     if (!allowedTargets || !allowedTargets.includes(targetService)) {
-      const error = `Call denied by Law #8 (Zero-Trust): ${this.config.serviceName} -> ${targetService}`;
+      const error = `Call denied by Law #8 (Zero-Trust): ${serviceName} -> ${targetService}`;
       console.error(error);
       return {
         success: false,
         error,
         requestId: `req_${Date.now()}`,
         timestamp: new Date().toISOString(),
+        correlationId,
       };
     }
 
@@ -108,10 +116,13 @@ export class RpcClient {
 
     try {
       // mTLS handshake: client cert + CA verification
+      const certPath = this.config.certPath || this.config.certFile || '';
+      const keyPath = this.config.keyPath || this.config.keyFile || '';
+      const caPath = this.config.caPath || this.config.caFile || '';
       const httpAgent = new https.Agent({
-        cert: fs.readFileSync(this.config.certPath),
-        key: fs.readFileSync(this.config.keyPath),
-        ca: fs.readFileSync(this.config.caPath),
+        cert: certPath ? fs.readFileSync(certPath) : undefined,
+        key: keyPath ? fs.readFileSync(keyPath) : undefined,
+        ca: caPath ? fs.readFileSync(caPath) : undefined,
         rejectUnauthorized: true, // Enforce cert verification
       });
 
@@ -155,12 +166,14 @@ export class RpcClient {
         httpsReq.end();
       });
     } catch (error) {
-      console.error(`RPC call failed: ${this.config.serviceName} -> ${targetService}`, error);
+      const serviceName = this.config.serviceName || '';
+      console.error(`RPC call failed: ${serviceName} -> ${targetService}`, error);
       return {
         success: false,
         error: String(error),
         requestId: request.requestId,
         timestamp: new Date().toISOString(),
+        correlationId,
       };
     }
   }
@@ -177,12 +190,10 @@ export class RpcClient {
  * RPC Server for receiving calls from other BRICs
  */
 export class RpcServer {
-  private config: mTLSConfig;
   private handlers: Map<string, (params: any) => Promise<any>> = new Map();
 
-  constructor(config: mTLSConfig) {
-    // Store config for future use (currently unused)
-    void config;
+  constructor(_config: mTLSConfig = {}) {
+    // Config reserved for future mTLS server setup
   }
 
   /**

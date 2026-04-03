@@ -218,7 +218,7 @@ describeIntegration('State Isolation & Row-Level Security', () => {
     // Try to access CA customer from IL context
     const caCustomerId = createdCustomers['CA'];
 
-    const { data, error } = await supabase
+    const { data, error: _rlsError } = await supabase
       .from('customers')
       .select('*')
       .eq('id', caCustomerId)
@@ -389,7 +389,7 @@ describeIntegration('Event System & Audit Trail (Law #7)', () => {
 
   beforeAll(async () => {
     // Subscribe to all events for testing
-    eventBus.subscribe('*', (event: Event) => {
+    eventBus.subscribe('*', async (event: Event) => {
       capturedEvents.push(event);
     });
   });
@@ -422,7 +422,6 @@ describeIntegration('Event System & Audit Trail (Law #7)', () => {
 
   it('should log events immutably with audit trail', async () => {
     // Events should be append-only
-    const eventsBefore = [...capturedEvents];
     const lastEventId = capturedEvents[capturedEvents.length - 1]?.id;
 
     // Create another event

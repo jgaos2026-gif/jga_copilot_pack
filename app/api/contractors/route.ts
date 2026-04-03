@@ -1,11 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { getSupabaseClient } from '@/lib/supabase-client';
 
 /**
  * GET /api/contractors
@@ -13,7 +8,7 @@ const supabase = createClient(
  */
 export async function GET() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from('users')
       .select('*')
       .eq('role', 'contractor');
@@ -44,7 +39,7 @@ export async function POST(request: NextRequest) {
     const { email, fullName, stateCode, licenseNumber } = body;
 
     // Insert contractor record
-    const { data, error } = await supabase
+    const { data, error } = await getSupabaseClient()
       .from('users')
       .insert({
         email,
