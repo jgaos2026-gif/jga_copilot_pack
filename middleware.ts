@@ -30,6 +30,12 @@ async function validateToken(token: string): Promise<boolean> {
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !anonKey) {
+    // Missing env vars means the app is misconfigured.  Log loudly and treat
+    // every token as invalid so no protected route is accidentally accessible.
+    console.error(
+      '[middleware] CRITICAL: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY is not set. ' +
+        'All protected routes will be inaccessible until these variables are configured.',
+    );
     return false;
   }
 

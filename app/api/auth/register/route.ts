@@ -59,7 +59,12 @@ export async function POST(request: NextRequest) {
     if (profileError) {
       // Compensating cleanup: remove the orphaned auth user so the two
       // stores don't get out of sync.
-      await supabase.auth.admin.deleteUser(authData.user.id);
+      const { error: deleteError } = await supabase.auth.admin.deleteUser(authData.user.id);
+      if (deleteError) {
+        console.error(
+          `[register] Cleanup failed — orphaned auth user ${authData.user.id}: ${deleteError.message}`,
+        );
+      }
       return NextResponse.json(
         { error: 'Registration failed. Please try again.' },
         { status: 500 },

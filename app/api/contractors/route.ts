@@ -138,7 +138,12 @@ export async function POST(request: NextRequest) {
 
     if (profileError) {
       // Compensating cleanup: remove orphaned auth user.
-      await supabase.auth.admin.deleteUser(authData.user.id);
+      const { error: deleteError } = await supabase.auth.admin.deleteUser(authData.user.id);
+      if (deleteError) {
+        console.error(
+          `[contractors] Cleanup failed — orphaned auth user ${authData.user.id}: ${deleteError.message}`,
+        );
+      }
       return NextResponse.json(
         { error: 'Failed to create contractor profile. Please try again.' },
         { status: 500 },
@@ -161,7 +166,12 @@ export async function POST(request: NextRequest) {
 
     if (contractorError) {
       // Compensating cleanup: remove orphaned auth user (profile cascades via FK).
-      await supabase.auth.admin.deleteUser(authData.user.id);
+      const { error: deleteError } = await supabase.auth.admin.deleteUser(authData.user.id);
+      if (deleteError) {
+        console.error(
+          `[contractors] Cleanup failed — orphaned auth user ${authData.user.id}: ${deleteError.message}`,
+        );
+      }
       return NextResponse.json(
         { error: 'Failed to create contractor record. Please try again.' },
         { status: 500 },
