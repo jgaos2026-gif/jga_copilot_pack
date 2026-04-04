@@ -22,6 +22,9 @@
     "load-test": "npx ts-node scripts/load-test.ts",
     "security-audit": "npx ts-node scripts/security-audit.ts",
     "verify-laws": "ts-node scripts/verify-laws.ts",
+    "compliance:check": "node --loader ts-node/esm scripts/compliance-check.ts",
+    "ops:run": "node --loader ts-node/esm bin/jga.ts ops:run",
+    "setup": "node --loader ts-node/esm bin/jga.ts setup",
     "build": "next build",
     "start": "next start",
     "dev": "next dev"

@@ -18,6 +18,144 @@ A complete, production-ready enterprise operating system built on the **Modular 
 
 ---
 
+## 🖥️ macOS Onboarding — VS Code + GitHub + Supabase
+
+Complete setup from a fresh Mac. Run each block in order.
+
+### 1. Install prerequisites
+
+```bash
+# Install Homebrew (skip if already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install toolchain
+brew install git gh node supabase/tap/supabase
+
+# Install VS Code (skip if already installed)
+brew install --cask visual-studio-code
+
+# Verify
+git --version && gh --version && node --version && supabase --version && code --version
+```
+
+### 2. Authenticate with GitHub
+
+```bash
+gh auth login
+# Choose: GitHub.com → HTTPS → Login with a web browser
+```
+
+Set your Git identity (one-time):
+
+```bash
+git config --global user.name  "Your Name"
+git config --global user.email "you@example.com"
+```
+
+### 3. Clone and open the repo
+
+```bash
+gh repo clone jgaos2026-gif/jga_copilot_pack
+cd jga_copilot_pack
+npm install
+code .
+```
+
+When VS Code opens it will prompt **"Install recommended extensions?"** — click **Install All**.
+This installs GitHub Copilot, Supabase, ESLint, Prettier, Vitest, and more.
+
+### 4. Configure environment variables
+
+```bash
+cp .env.example .env.local
+# Open .env.local and fill in your Supabase URL, anon key, and service-role key.
+# See docs/ENVIRONMENT.md for a full description of every variable.
+```
+
+> **Never commit `.env.local`** — it is listed in `.gitignore`.
+
+### 5. Authenticate with Supabase CLI
+
+```bash
+supabase login          # opens browser, copies token automatically
+supabase projects list  # confirm you can see your projects
+```
+
+### 6. Link repo to your Supabase project
+
+> **TODO (human step):** Pick the correct project when prompted — avoid accidentally linking to your production Supabase project during local dev. You can run `supabase projects list` first to confirm the right project ID.
+
+```bash
+supabase link           # interactive: pick your project from the list
+```
+
+(Optional) Pull the remote schema into local migration files:
+
+```bash
+supabase db pull
+```
+
+### 7. Start the local Supabase stack (Docker required)
+
+Docker Desktop must be running before this step.
+
+```bash
+bash scripts/supabase-dev.sh start
+# Prints Studio URL (http://localhost:54323) and local API keys
+```
+
+Other helper commands:
+
+| Command | What it does |
+|---------|-------------|
+| `bash scripts/supabase-dev.sh stop` | Stop local stack |
+| `bash scripts/supabase-dev.sh reset` | Replay all migrations on a clean DB |
+| `bash scripts/supabase-dev.sh migration <name>` | Create a new migration file |
+| `supabase db push` | Push local migrations to your remote project |
+
+### 8. Run the app
+
+```bash
+npm run dev             # http://localhost:3000
+```
+
+In VS Code you can also use **Terminal › Run Task → dev: start Next.js**.
+
+### 9. Run tests and lint
+
+```bash
+npm run test:run        # run all unit tests once
+npm run lint            # ESLint check
+npm run type-check      # TypeScript strict check
+```
+
+### Common commands cheatsheet
+
+| Command | Purpose |
+|---------|---------|
+| `npm run dev` | Start Next.js dev server |
+| `npm run build` | Production build |
+| `npm run test:run` | Run all tests once |
+| `npm test` | Watch mode |
+| `npm run lint` | Lint TypeScript/TSX |
+| `npm run lint:fix` | Auto-fix lint issues |
+| `npm run type-check` | TypeScript type check |
+| `bash scripts/supabase-dev.sh start` | Start local Supabase |
+
+### Troubleshooting
+
+| Symptom | Fix |
+|---------|-----|
+| `supabase: command not found` | `brew install supabase/tap/supabase` |
+| Docker not running | Open Docker Desktop and wait for it to start |
+| `npm ci` fails | Delete `node_modules` and run `npm install` |
+| VS Code extensions not showing | Reload window: ⇧⌘P → `Developer: Reload Window` |
+| GitHub Copilot not authenticated | Click the Accounts icon (bottom-left) and sign in |
+| `supabase link` fails or can't find projects | Run `supabase login` first to authenticate |
+| Local API returns 401 | Check `.env.local` — ensure `NEXT_PUBLIC_SUPABASE_ANON_KEY` matches `supabase status` output |
+
+---
+
 ## 🚀 System Overview
 
 ### What Is JGA Enterprise OS?

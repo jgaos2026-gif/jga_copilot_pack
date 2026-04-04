@@ -1,0 +1,33 @@
+{
+  "recommendations": [
+    // GitHub
+    "github.copilot",
+    "github.copilot-chat",
+    "github.vscode-pull-request-github",
+
+    // Supabase
+    "supabase.vscode-supabase-extension",
+
+    // TypeScript / JavaScript quality
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next",
+
+    // Testing
+    "vitest.explorer",
+
+    // Database / SQL
+    "ms-vscode.data-workspace",
+    "cweijan.vscode-postgresql-client2",
+
+    // Tailwind CSS
+    "bradlc.vscode-tailwindcss",
+
+    // General productivity
+    "eamodio.gitlens",
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker",
+    "mikestead.dotenv"
+  ],
+  "unwantedRecommendations": []
+}

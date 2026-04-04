@@ -1,0 +1,122 @@
+{
+  "version": "1.0",
+  "description": "JGA Enterprise OS default policy rules — enforces SYSTEM_CONSTITUTION.md and SECTIONAL_LAWS.md",
+  "policies": [
+    {
+      "id": "GATE-01",
+      "action": "project.set_active",
+      "description": "Project cannot transition to active status without a signed contract.",
+      "conditions": [
+        { "field": "context.extras.contract_signed", "operator": "eq", "value": true }
+      ],
+      "effect": "allow",
+      "denyRationale": "GATE-01 BLOCKED: Project cannot become active without a signed contract. (SYSTEM_CONSTITUTION.md Art. IV §2; SECTIONAL_LAWS.md § 2.2)"
+    },
+    {
+      "id": "GATE-02",
+      "action": "project.start_production",
+      "description": "Production work cannot begin before a deposit is confirmed.",
+      "conditions": [
+        { "field": "context.extras.deposit_confirmed", "operator": "eq", "value": true }
+      ],
+      "effect": "allow",
+      "denyRationale": "GATE-02 BLOCKED: Production cannot begin before deposit is confirmed. (SYSTEM_CONSTITUTION.md Art. IV §1; SECTIONAL_LAWS.md § 2.1)"
+    },
+    {
+      "id": "GATE-03",
+      "action": "project.deliver_final",
+      "description": "Final deliverables cannot be released before final payment is cleared.",
+      "conditions": [
+        { "field": "context.extras.final_payment_cleared", "operator": "eq", "value": true }
+      ],
+      "effect": "allow",
+      "denyRationale": "GATE-03 BLOCKED: Final delivery is blocked until final payment is cleared. (SYSTEM_CONSTITUTION.md Art. IV §3; SECTIONAL_LAWS.md § 2.3)"
+    },
+    {
+      "id": "GATE-04",
+      "action": "business.outbound_call",
+      "description": "Outbound business calls require a valid compliance artifact.",
+      "conditions": [
+        { "field": "context.extras.compliance_artifact_valid", "operator": "eq", "value": true }
+      ],
+      "effect": "allow",
+      "denyRationale": "GATE-04 BLOCKED: Outbound business workflow requires a valid compliance artifact. (SYSTEM_CONSTITUTION.md Art. II Law 6; SECTIONAL_LAWS.md § 5.1)"
+    },
+    {
+      "id": "GATE-05",
+      "action": "bric.activate_state",
+      "description": "State BRIC activation requires Owner + Compliance Agent dual-auth.",
+      "conditions": [
+        { "field": "context.actorRole", "operator": "in", "value": ["owner"] },
+        { "field": "context.extras.compliance_agent_approved", "operator": "eq", "value": true }
+      ],
+      "effect": "allow",
+      "denyRationale": "GATE-05 BLOCKED: State BRIC activation requires Owner role and Compliance Agent approval. (SYSTEM_CONSTITUTION.md Art. II Law 5; SECTIONAL_LAWS.md § 5.1)"
+    },
+    {
+      "id": "GATE-06",
+      "action": "data.access_state_bric",
+      "description": "Contractor may only access their assigned state BRIC.",
+      "conditions": [
+        {
+          "or": [
+            { "field": "context.actorRole", "operator": "in", "value": ["owner", "admin", "staff"] },
+            { "field": "context.extras.assigned_bric", "operator": "eq", "field2": "context.bricId" }
+          ]
+        }
+      ],
+      "effect": "allow",
+      "denyRationale": "GATE-06 BLOCKED: Contractor may only access their assigned State BRIC. (SYSTEM_CONSTITUTION.md Art. V; SECTIONAL_LAWS.md § 3.2)"
+    },
+    {
+      "id": "GATE-07",
+      "action": "pricing.serve_quote",
+      "description": "Pricing quotes must originate from the backend pricing engine.",
+      "conditions": [
+        { "field": "context.extras.source", "operator": "eq", "value": "pricing-engine" }
+      ],
+      "effect": "allow",
+      "denyRationale": "GATE-07 BLOCKED: Pricing quote did not originate from the pricing engine. Hardcoded prices are not permitted. (SYSTEM_CONSTITUTION.md Art. IV §4; SECTIONAL_LAWS.md § 2.4)"
+    },
+    {
+      "id": "GATE-08",
+      "action": "audit.write",
+      "description": "Audit log writes must be append-only (no UPDATE or DELETE).",
+      "conditions": [
+        { "field": "context.extras.operation", "operator": "in", "value": ["INSERT", "append"] }
+      ],
+      "effect": "allow",
+      "denyRationale": "GATE-08 BLOCKED: Audit log is append-only. UPDATE and DELETE operations are unconstitutional. (SYSTEM_CONSTITUTION.md Art. VI §2; SECTIONAL_LAWS.md § 2.5)"
+    },
+    {
+      "id": "CONTRACTOR-NO-PRICING",
+      "action": "pricing.edit",
+      "description": "Contractors may not edit pricing.",
+      "conditions": [
+        { "field": "context.actorRole", "operator": "not_in", "value": ["contractor"] }
+      ],
+      "effect": "allow",
+      "denyRationale": "BLOCKED: Contractors may not edit pricing. (SYSTEM_CONSTITUTION.md Art. V §1; SECTIONAL_LAWS.md § 3.2)"
+    },
+    {
+      "id": "CONTRACTOR-NO-CONTRACT-EDIT",
+      "action": "contract.edit_terms",
+      "description": "Contractors may not edit contract terms.",
+      "conditions": [
+        { "field": "context.actorRole", "operator": "not_in", "value": ["contractor"] }
+      ],
+      "effect": "allow",
+      "denyRationale": "BLOCKED: Contractors may not edit contract terms. (SYSTEM_CONSTITUTION.md Art. V §1; SECTIONAL_LAWS.md § 3.2)"
+    },
+    {
+      "id": "CONTRACTOR-NO-PAYOUT-EDIT",
+      "action": "payout.edit_rules",
+      "description": "Contractors may not edit payout rules.",
+      "conditions": [
+        { "field": "context.actorRole", "operator": "not_in", "value": ["contractor"] }
+      ],
+      "effect": "allow",
+      "denyRationale": "BLOCKED: Contractors may not edit payout rules. (SYSTEM_CONSTITUTION.md Art. V §1)"
+    }
+  ]
+}
