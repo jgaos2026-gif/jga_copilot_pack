@@ -116,8 +116,8 @@ describe('EventBus — dead letter queue', () => {
     await bus.publish(makeEvent('x', 'dlq-a'));
     await bus.publish(makeEvent('y', 'dlq-b'));
 
-    const all = bus.getDLQEvents();
-    expect(all.length).toBeGreaterThanOrEqual(2);
+    const allDLQEvents = bus.getDLQEvents();
+    expect(allDLQEvents.length).toBeGreaterThanOrEqual(2);
   });
 
   it('replayDeadLetterQueue re-delivers DLQ events', async () => {

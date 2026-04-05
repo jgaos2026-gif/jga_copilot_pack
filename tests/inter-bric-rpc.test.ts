@@ -21,7 +21,7 @@ describe('RpcClient — construction', () => {
   });
 
   it('constructs with empty cert paths (invalid client for mTLS rejection test)', () => {
-    expect(() => new RpcClient({ serviceName: 'x', certPath: '', keyPath: '', caPath: '' })).not.toThrow();
+    expect(() => new RpcClient({ serviceName: 'test-empty-certs-service', certPath: '', keyPath: '', caPath: '' })).not.toThrow();
   });
 });
 

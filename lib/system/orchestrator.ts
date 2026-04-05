@@ -269,7 +269,9 @@ export class SystemOrchestrator {
 
   private emitSystemEvent(type: string, source: string, data: Record<string, unknown>): void {
     const event = createEvent(type, EventTopics.AUDIT_LOG, data, source);
-    // Fire-and-forget; boot sequence must not block on event delivery
+    // Fire-and-forget: boot sequence must not block on event delivery.
+    // Delivery failures are logged internally by the EventBus (DLQ) and are
+    // non-fatal during startup.
     void this.eventBus.publish(event);
   }
 }

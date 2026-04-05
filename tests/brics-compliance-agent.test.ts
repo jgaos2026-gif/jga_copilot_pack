@@ -74,8 +74,8 @@ describe('ComplianceAgent — artifact generation and gate (Law #6)', () => {
   it('verifyArtifact returns ok=true for a valid artifact', async () => {
     await agent.ingestRegulation('NIST', 'NIST', 'desc', '1.0');
     await agent.generateComplianceArtifact();
-    const result = await agent.verifyComplianceGate();
-    expect(result.ok).toBe(true);
+    const gateVerification = await agent.verifyComplianceGate();
+    expect(gateVerification.ok).toBe(true);
   });
 
   it('revokeCompliance sets approved=false and artifact status to REVOKED', async () => {
