@@ -1,6 +1,7 @@
 {
   "bricks": [
     {
+      "id": "1775118035031-hh4iwxt",
       "id": "1775121253317-dsq9q4k",
       "bricId": "state-1",
       "schemaVersion": "v1",
@@ -10,6 +11,7 @@
       "digest": "a69cedd57e208d05eddc7677bad44532997333d554c270ef17224061aa8661d0"
     },
     {
+      "id": "1775118035032-8j5gntc",
       "id": "1775121253317-v0tpt4l",
       "bricId": "state-1",
       "schemaVersion": "v1",
@@ -24,5 +26,6 @@
     "0d5974e9a4a96de7809e4b2ffedf0c7e4fb26388d4473b2398b18c88f664a40e"
   ],
   "merkle": "725b49c1db4316db25c1b426f617668f4f29ebe9bad4b0f8fdf6be3189f88710",
+  "timestamp": 1775118035032
   "timestamp": 1775121253317
 }
