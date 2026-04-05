@@ -2,15 +2,6 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { getSupabaseClient } from '@/lib/supabase-client';
 
-// Lazy singleton: initialised on first request, not at build time
-let _supabase: ReturnType<typeof getSupabaseClient> | undefined;
-const supabase = new Proxy(Object.create(null) as ReturnType<typeof getSupabaseClient>, {
-  get(_t, prop) {
-    _supabase = _supabase ?? getSupabaseClient();
-    return ((_supabase as unknown) as Record<string, unknown>)[prop as string];
-  },
-});
-
 
 /**
  * GET /api/contractors
@@ -18,6 +9,7 @@ const supabase = new Proxy(Object.create(null) as ReturnType<typeof getSupabaseC
  */
 export async function GET() {
   try {
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('users')
       .select('*')
@@ -45,6 +37,7 @@ export async function GET() {
  */
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await request.json();
     const { email, fullName, stateCode, licenseNumber } = body;
 

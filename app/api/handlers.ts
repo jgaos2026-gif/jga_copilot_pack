@@ -9,15 +9,6 @@ import { getSupabaseClient } from '@/lib/supabase-client';
 import { z } from 'zod';
 import { eventBus, createEvent, EventTopics } from '@/lib/event-system';
 
-// Lazy singleton: initialised on first request, not at build time
-let _supabase: ReturnType<typeof getSupabaseClient> | undefined;
-const supabase = new Proxy(Object.create(null) as ReturnType<typeof getSupabaseClient>, {
-  get(_t, prop) {
-    _supabase = _supabase ?? getSupabaseClient();
-    return ((_supabase as unknown) as Record<string, unknown>)[prop as string];
-  },
-});
-
 
 // Input validation schemas
 const intakeSchema = z.object({
@@ -107,6 +98,7 @@ export async function handleIntake(req: NextRequest) {
  */
 export async function handleCreateCustomer(req: NextRequest, state: string) {
   try {
+    const supabase = getSupabaseClient();
     const auth = req.headers.get('authorization');
     if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -166,6 +158,7 @@ export async function handleCreateCustomer(req: NextRequest, state: string) {
  */
 export async function handleCreateProject(req: NextRequest, state: string) {
   try {
+    const supabase = getSupabaseClient();
     const auth = req.headers.get('authorization');
     if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -230,6 +223,7 @@ export async function handleCreateProject(req: NextRequest, state: string) {
  */
 export async function handleGetProject(_req: NextRequest, state: string, id: string) {
   try {
+    const supabase = getSupabaseClient();
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -260,6 +254,7 @@ export async function handleGetProject(_req: NextRequest, state: string, id: str
  */
 export async function handleRecordTransaction(req: NextRequest, state: string) {
   try {
+    const supabase = getSupabaseClient();
     const auth = req.headers.get('authorization');
     if (!auth) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -329,6 +324,7 @@ export async function handleRecordTransaction(req: NextRequest, state: string) {
  */
 export async function handlePaymentWebhook(req: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await req.json();
 
     // Verify webhook signature
@@ -392,6 +388,7 @@ export async function handlePaymentWebhook(req: NextRequest) {
  */
 export async function handleLogin(req: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const { email, password } = await req.json();
 
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -425,6 +422,7 @@ export async function handleLogin(req: NextRequest) {
  */
 export async function handleMfaVerify(req: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const { userId, totpToken } = await req.json();
 
     // TODO: Verify TOTP token against user's secret

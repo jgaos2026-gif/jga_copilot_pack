@@ -3,15 +3,6 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { getSupabaseClient } from '@/lib/supabase-client';
 
-// Lazy singleton: initialised on first request, not at build time
-let _supabase: ReturnType<typeof getSupabaseClient> | undefined;
-const supabase = new Proxy(Object.create(null) as ReturnType<typeof getSupabaseClient>, {
-  get(_t, prop) {
-    _supabase = _supabase ?? getSupabaseClient();
-    return ((_supabase as unknown) as Record<string, unknown>)[prop as string];
-  },
-});
-
 
 // Validation schemas
 const loginSchema = z.object({
@@ -25,6 +16,7 @@ const loginSchema = z.object({
  */
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await request.json();
     const { email, password } = loginSchema.parse(body);
 
@@ -60,6 +52,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const token = request.headers.get('authorization')?.split(' ')[1];
     
     if (token) {

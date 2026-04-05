@@ -3,15 +3,6 @@ import { NextResponse } from 'next/server';
 import { getSupabaseClient } from '@/lib/supabase-client';
 import { z } from 'zod';
 
-// Lazy singleton: initialised on first request, not at build time
-let _supabase: ReturnType<typeof getSupabaseClient> | undefined;
-const supabase = new Proxy(Object.create(null) as ReturnType<typeof getSupabaseClient>, {
-  get(_t, prop) {
-    _supabase = _supabase ?? getSupabaseClient();
-    return ((_supabase as unknown) as Record<string, unknown>)[prop as string];
-  },
-});
-
 
 const projectSchema = z.object({
   customer_id: z.string().uuid(),
@@ -28,6 +19,7 @@ const projectSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const customerId = request.nextUrl.searchParams.get('customer_id');
 
     let query = supabase.from('projects').select('*');
@@ -60,6 +52,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await request.json();
     const projectData = projectSchema.parse(body);
 
@@ -102,6 +95,7 @@ export async function POST(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await request.json();
     const { id, ...updates } = body;
 
@@ -136,6 +130,7 @@ export async function PUT(request: NextRequest) {
  */
 export async function DELETE(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const id = request.nextUrl.searchParams.get('id');
 
     if (!id) {

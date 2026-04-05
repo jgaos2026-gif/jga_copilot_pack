@@ -3,15 +3,6 @@ import { NextResponse } from 'next/server';
 import { getSupabaseClient } from '@/lib/supabase-client';
 import { z } from 'zod';
 
-// Lazy singleton: initialised on first request, not at build time
-let _supabase: ReturnType<typeof getSupabaseClient> | undefined;
-const supabase = new Proxy(Object.create(null) as ReturnType<typeof getSupabaseClient>, {
-  get(_t, prop) {
-    _supabase = _supabase ?? getSupabaseClient();
-    return ((_supabase as unknown) as Record<string, unknown>)[prop as string];
-  },
-});
-
 
 const transactionSchema = z.object({
   project_id: z.string().uuid(),
@@ -28,6 +19,7 @@ const transactionSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const projectId = request.nextUrl.searchParams.get('project_id');
     const customerId = request.nextUrl.searchParams.get('customer_id');
 
@@ -65,6 +57,7 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await request.json();
     const transactionData = transactionSchema.parse(body);
 
@@ -107,6 +100,7 @@ export async function POST(request: NextRequest) {
  */
 export async function PUT(request: NextRequest) {
   try {
+    const supabase = getSupabaseClient();
     const body = await request.json();
     const { id, status } = body;
 
