@@ -1,11 +1,16 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient } from '@/lib/supabase-client';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Lazy singleton: initialised on first request, not at build time
+let _supabase: ReturnType<typeof getSupabaseClient> | undefined;
+const supabase = new Proxy(Object.create(null) as ReturnType<typeof getSupabaseClient>, {
+  get(_t, prop) {
+    _supabase = _supabase ?? getSupabaseClient();
+    return ((_supabase as unknown) as Record<string, unknown>)[prop as string];
+  },
+});
+
 
 /**
  * GET /api/contracts

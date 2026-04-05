@@ -5,14 +5,19 @@
 
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { getSupabaseClient } from '@/lib/supabase-client';
 import { z } from 'zod';
 import { eventBus, createEvent, EventTopics } from '@/lib/event-system';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Lazy singleton: initialised on first request, not at build time
+let _supabase: ReturnType<typeof getSupabaseClient> | undefined;
+const supabase = new Proxy(Object.create(null) as ReturnType<typeof getSupabaseClient>, {
+  get(_t, prop) {
+    _supabase = _supabase ?? getSupabaseClient();
+    return ((_supabase as unknown) as Record<string, unknown>)[prop as string];
+  },
+});
+
 
 // Input validation schemas
 const intakeSchema = z.object({
@@ -223,7 +228,7 @@ export async function handleCreateProject(req: NextRequest, state: string) {
  * GET /api/state-[state]/projects/[id]
  * Get project details
  */
-export async function handleGetProject(req: NextRequest, state: string, id: string) {
+export async function handleGetProject(_req: NextRequest, state: string, id: string) {
   try {
     const { data, error } = await supabase
       .from('projects')
@@ -453,7 +458,7 @@ export async function handleMfaVerify(req: NextRequest) {
  * GET /api/health
  * Health check endpoint
  */
-export async function handleHealth(req: NextRequest) {
+export async function handleHealth(_req: NextRequest) {
   return NextResponse.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),

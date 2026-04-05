@@ -1,8 +1,5 @@
-import Anthropic from '@anthropic-ai/sdk';
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// TODO: Integrate Anthropic SDK for AI-assisted law verification when API key is available
+// import Anthropic from '@anthropic-ai/sdk';
 
 /**
  * Verify all 8 system laws are enforced in codebase

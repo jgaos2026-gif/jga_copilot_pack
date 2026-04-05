@@ -218,7 +218,7 @@ describeIntegration('State Isolation & Row-Level Security', () => {
     // Try to access CA customer from IL context
     const caCustomerId = createdCustomers['CA'];
 
-    const { data, error } = await supabase
+    const { data, error: _rlsError } = await supabase
       .from('customers')
       .select('*')
       .eq('id', caCustomerId)
@@ -227,6 +227,7 @@ describeIntegration('State Isolation & Row-Level Security', () => {
 
     // Should return zero rows (RLS enforcement)
     expect(data).toBeNull();
+    void _rlsError;
   });
 
   it('should prevent cross-state project creation', async () => {
@@ -389,7 +390,7 @@ describeIntegration('Event System & Audit Trail (Law #7)', () => {
 
   beforeAll(async () => {
     // Subscribe to all events for testing
-    eventBus.subscribe('*', (event: Event) => {
+    eventBus.subscribe('*', async (event: Event) => {
       capturedEvents.push(event);
     });
   });
@@ -422,7 +423,6 @@ describeIntegration('Event System & Audit Trail (Law #7)', () => {
 
   it('should log events immutably with audit trail', async () => {
     // Events should be append-only
-    const eventsBefore = [...capturedEvents];
     const lastEventId = capturedEvents[capturedEvents.length - 1]?.id;
 
     // Create another event
@@ -446,14 +446,14 @@ describeIntegration('Event System & Audit Trail (Law #7)', () => {
 
   it('should handle dead letter queue for failed events', async () => {
     // Test that failed events go to DLQ after retries
-    const dlqEventsBeforbe = await eventBus.getDLQEvents();
+    const dlqEventsBeforbe = eventBus.getDLQEvents();
     const initialDLQSize = dlqEventsBeforbe?.length || 0;
 
     // Cause a failure by sending invalid data
     // (in real system: database connection failure, etc.)
 
     // DLQ size might increase (depending on failure injection)
-    const dlqEventsAfter = await eventBus.getDLQEvents();
+    const dlqEventsAfter = eventBus.getDLQEvents();
     expect((dlqEventsAfter?.length || 0) >= initialDLQSize).toBe(true);
   });
 });
@@ -467,18 +467,20 @@ describeIntegration('Inter-BRIC RPC & Zero-Trust (Law #8)', () => {
   beforeAll(async () => {
     // Initialize RPC client with test certificates
     rpcClient = new RpcClient({
-      certFile: process.env.TEST_CLIENT_CERT!,
-      keyFile: process.env.TEST_CLIENT_KEY!,
-      caFile: process.env.TEST_CA_CERT!,
+      certPath: process.env.TEST_CLIENT_CERT!,
+      keyPath: process.env.TEST_CLIENT_KEY!,
+      caPath: process.env.TEST_CA_CERT!,
+      serviceName: 'test-client',
     });
   });
 
   it('should enforce mTLS for inter-BRIC calls', async () => {
     // Try to call without certificates
     const invalidClient = new RpcClient({
-      certFile: '', // Invalid
-      keyFile: '',
-      caFile: '',
+      certPath: '', // Invalid
+      keyPath: '',
+      caPath: '',
+      serviceName: 'invalid-client',
     });
 
     const response = await invalidClient.call('state-bric-ca', 'getCustomer', {
@@ -522,7 +524,7 @@ describeIntegration('Inter-BRIC RPC & Zero-Trust (Law #8)', () => {
     );
 
     // Response should include correlation ID for tracing
-    expect(response.correlationId || response.meta?.correlationId).toBe(
+    expect(response.correlationId).toBe(
       correlationId
     );
   });

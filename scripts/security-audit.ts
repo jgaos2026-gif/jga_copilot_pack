@@ -86,6 +86,7 @@ class SecurityAuditor {
       'lib/**/*.ts',
       'scripts/**/*.ts',
     ]
+    void filesToCheck // pattern list reserved for future file-based scanning
 
     let secretsFound = false
 
@@ -239,6 +240,7 @@ class SecurityAuditor {
   private async auditEncryption(): Promise<void> {
     // Check for TLS configuration
     const tlsEnabled = process.env.TLS_ENABLED !== 'false'
+    void tlsEnabled // default: enabled; must be verified before production
 
     this.checks.push({
       name: 'TLS/SSL encryption enabled',
@@ -304,18 +306,18 @@ class SecurityAuditor {
     console.log(`  ${gateCheck.ok ? '✅' : '❌'} Compliance gate active`)
 
     // Check test results
-    const testsPassed = artifact.testResults.every(t => t.passed)
+    const testsPassed = artifact.testResults.every((t: { passed: boolean }) => t.passed)
 
     this.checks.push({
       name: 'All compliance tests passing',
       category: 'compliance',
       severity: 'critical',
       passed: testsPassed,
-      details: `${artifact.testResults.filter(t => t.passed).length}/${artifact.testResults.length} tests passed`,
+      details: `${artifact.testResults.filter((t: { passed: boolean }) => t.passed).length}/${artifact.testResults.length} tests passed`,
     })
 
     console.log(
-      `  ${testsPassed ? '✅' : '❌'} Compliance tests: ${artifact.testResults.filter(t => t.passed).length}/${artifact.testResults.length}`
+      `  ${testsPassed ? '✅' : '❌'} Compliance tests: ${artifact.testResults.filter((t: { passed: boolean }) => t.passed).length}/${artifact.testResults.length}`
     )
 
     await orchestrator.shutdown()

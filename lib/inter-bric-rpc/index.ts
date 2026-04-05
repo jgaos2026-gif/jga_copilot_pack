@@ -22,6 +22,7 @@ export interface RpcResponse {
   error?: string;
   requestId: string;
   timestamp: string;
+  correlationId?: string;
 }
 
 /**
@@ -161,6 +162,7 @@ export class RpcClient {
         error: String(error),
         requestId: request.requestId,
         timestamp: new Date().toISOString(),
+        correlationId,
       };
     }
   }
@@ -177,12 +179,10 @@ export class RpcClient {
  * RPC Server for receiving calls from other BRICs
  */
 export class RpcServer {
-  private config: mTLSConfig;
   private handlers: Map<string, (params: any) => Promise<any>> = new Map();
 
-  constructor(config: mTLSConfig) {
-    // Store config for future use (currently unused)
-    void config;
+  constructor(_config: mTLSConfig) {
+    // Config reserved for future mTLS server setup
   }
 
   /**
