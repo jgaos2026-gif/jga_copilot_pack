@@ -42,6 +42,10 @@
       }
     ]
   },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
   "include": [
     "config/**/*.ts",
     "lib/**/*.ts",
