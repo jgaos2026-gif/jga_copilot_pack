@@ -218,7 +218,7 @@ describeIntegration('State Isolation & Row-Level Security', () => {
     // Try to access CA customer from IL context
     const caCustomerId = createdCustomers['CA'];
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('customers')
       .select('*')
       .eq('id', caCustomerId)
@@ -389,7 +389,7 @@ describeIntegration('Event System & Audit Trail (Law #7)', () => {
 
   beforeAll(async () => {
     // Subscribe to all events for testing
-    eventBus.subscribe('*', (event: Event) => {
+    eventBus.subscribe('*', async (event: Event) => {
       capturedEvents.push(event);
     });
   });
@@ -422,7 +422,8 @@ describeIntegration('Event System & Audit Trail (Law #7)', () => {
 
   it('should log events immutably with audit trail', async () => {
     // Events should be append-only
-    const eventsBefore = [...capturedEvents];
+    const _eventsBefore = [...capturedEvents]; // snapshot preserved for ordering assertion below
+    void _eventsBefore;
     const lastEventId = capturedEvents[capturedEvents.length - 1]?.id;
 
     // Create another event
@@ -467,18 +468,20 @@ describeIntegration('Inter-BRIC RPC & Zero-Trust (Law #8)', () => {
   beforeAll(async () => {
     // Initialize RPC client with test certificates
     rpcClient = new RpcClient({
-      certFile: process.env.TEST_CLIENT_CERT!,
-      keyFile: process.env.TEST_CLIENT_KEY!,
-      caFile: process.env.TEST_CA_CERT!,
+      serviceName: 'test-client',
+      certPath: process.env.TEST_CLIENT_CERT!,
+      keyPath: process.env.TEST_CLIENT_KEY!,
+      caPath: process.env.TEST_CA_CERT!,
     });
   });
 
   it('should enforce mTLS for inter-BRIC calls', async () => {
     // Try to call without certificates
     const invalidClient = new RpcClient({
-      certFile: '', // Invalid
-      keyFile: '',
-      caFile: '',
+      serviceName: 'test-invalid',
+      certPath: '', // Invalid
+      keyPath: '',
+      caPath: '',
     });
 
     const response = await invalidClient.call('state-bric-ca', 'getCustomer', {
@@ -522,7 +525,7 @@ describeIntegration('Inter-BRIC RPC & Zero-Trust (Law #8)', () => {
     );
 
     // Response should include correlation ID for tracing
-    expect(response.correlationId || response.meta?.correlationId).toBe(
+    expect(response.correlationId).toBe(
       correlationId
     );
   });

@@ -187,7 +187,7 @@ ${colors.cyan}╔═════════════════════
 
     console.log(`\n${colors.cyan}Load test framework...${colors.reset}`)
     try {
-      const exists = await fs.access(path.join(process.cwd(), 'scripts', 'load-test.ts'))
+      await fs.access(path.join(process.cwd(), 'scripts', 'load-test.ts'))
       console.log(`${colors.green}✅${colors.reset} Load test script: Ready (1k contractors, 100 concurrent)`)
       console.log(`   Targets: P99 < 500ms, error rate < 1%, throughput > 5 leads/sec`)
       this.checks.push({
@@ -207,7 +207,7 @@ ${colors.cyan}╔═════════════════════
 
     console.log(`\n${colors.cyan}Security audit framework...${colors.reset}`)
     try {
-      const exists = await fs.access(path.join(process.cwd(), 'scripts', 'security-audit.ts'))
+      await fs.access(path.join(process.cwd(), 'scripts', 'security-audit.ts'))
       console.log(`${colors.green}✅${colors.reset} Security audit: 5-phase comprehensive validation`)
       console.log(`   Phases: secrets, dependencies, architecture, encryption, compliance`)
       this.checks.push({

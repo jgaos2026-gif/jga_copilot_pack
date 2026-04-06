@@ -152,6 +152,19 @@ export class EventBus {
   }
 
   /**
+   * Get all dead-letter-queue events across all topics
+   */
+  getDLQEvents(): Event[] {
+    const all: Event[] = [];
+    for (const topic of this.topics.values()) {
+      if (topic.deadLetterQueue) {
+        all.push(...topic.deadLetterQueue);
+      }
+    }
+    return all;
+  }
+
+  /**
    * Get event log (for testing/audit)
    */
   getEventLog(filter?: (e: Event) => boolean): Event[] {

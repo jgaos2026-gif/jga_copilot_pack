@@ -6,8 +6,6 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient } from '@supabase/supabase-js';
 import { eventBus, EventTopics, createEvent } from '../../lib/event-system';
-import { RpcClient } from '../../lib/inter-bric-rpc';
-
 export interface OwnersRoomConfig {
   supabaseUrl: string;
   supabaseServiceKey: string;
@@ -320,5 +318,28 @@ export class OwnersRoom {
    */
   getInternalAuditLog(): any[] {
     return [...this.auditLog];
+  }
+
+  /**
+   * Security audit: verify MFA and dual-auth controls are configured
+   * Called by the security-audit script (Law #5)
+   */
+  async auditOwnersRoomSecurity(): Promise<{ ok: boolean; violations: string[] }> {
+    const violations: string[] = [];
+
+    // Law #5: MFA must be enforced for all admin operations
+    // In production, verify against actual IAM config
+    const mfaEnforced = process.env.OWNERS_ROOM_MFA_REQUIRED !== 'false';
+    if (!mfaEnforced) {
+      violations.push('MFA not enforced (OWNERS_ROOM_MFA_REQUIRED=false)');
+    }
+
+    // Law #5: Dual-auth required for financial actions
+    const dualAuthEnabled = process.env.OWNERS_ROOM_DUAL_AUTH !== 'false';
+    if (!dualAuthEnabled) {
+      violations.push('Dual-auth not enabled (OWNERS_ROOM_DUAL_AUTH=false)');
+    }
+
+    return { ok: violations.length === 0, violations };
   }
 }

@@ -1,8 +1,10 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+// TODO: Wire up AI-assisted verification when ANTHROPIC_API_KEY is configured
+function makeAnthropicClient() {
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+}
+void makeAnthropicClient; // reserved for future use
 
 /**
  * Verify all 8 system laws are enforced in codebase
