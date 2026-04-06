@@ -3,10 +3,14 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export const dynamic = 'force-dynamic';
+
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 // Validation schemas
 const loginSchema = z.object({
@@ -24,6 +28,7 @@ export async function POST(request: NextRequest) {
     const { email, password } = loginSchema.parse(body);
 
     // Authenticate user
+    const supabase = getSupabase();
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -58,6 +63,7 @@ export async function GET(request: NextRequest) {
     const token = request.headers.get('authorization')?.split(' ')[1];
     
     if (token) {
+      const supabase = getSupabase();
       await supabase.auth.signOut();
     }
 

@@ -3,10 +3,14 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export const dynamic = 'force-dynamic';
+
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 const transactionSchema = z.object({
   project_id: z.string().uuid(),
@@ -26,7 +30,7 @@ export async function GET(request: NextRequest) {
     const projectId = request.nextUrl.searchParams.get('project_id');
     const customerId = request.nextUrl.searchParams.get('customer_id');
 
-    let query = supabase.from('transactions').select('*');
+    let query = getSupabase().from('transactions').select('*');
 
     if (projectId) {
       query = query.eq('project_id', projectId);
@@ -63,7 +67,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const transactionData = transactionSchema.parse(body);
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('transactions')
       .insert({
         project_id: transactionData.project_id,
@@ -105,7 +109,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { id, status } = body;
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('transactions')
       .update({ status, updated_at: new Date().toISOString() })
       .eq('id', id)

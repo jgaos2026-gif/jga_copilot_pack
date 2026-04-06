@@ -2,10 +2,14 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export const dynamic = 'force-dynamic';
+
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+}
 
 /**
  * GET /api/contracts
@@ -15,7 +19,7 @@ export async function GET(request: NextRequest) {
   try {
     const projectId = request.nextUrl.searchParams.get('project_id');
 
-    let query = supabase.from('contracts').select('*');
+    let query = getSupabase().from('contracts').select('*');
 
     if (projectId) {
       query = query.eq('project_id', projectId);
@@ -48,7 +52,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { project_id, contractor_id, terms, amount, state_code } = body;
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('contracts')
       .insert({
         project_id,
@@ -89,7 +93,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { id, ...updates } = body;
 
-    const { data, error } = await supabase
+    const { data, error } = await getSupabase()
       .from('contracts')
       .update(updates)
       .eq('id', id)
@@ -129,7 +133,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const { error } = await supabase
+    const { error } = await getSupabase()
       .from('contracts')
       .delete()
       .eq('id', id);
