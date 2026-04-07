@@ -27,7 +27,9 @@
     "setup": "node --loader ts-node/esm bin/jga.ts setup",
     "build": "next build",
     "start": "next start",
-    "dev": "next dev"
+    "dev": "next dev",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.12.0",
@@ -54,6 +56,7 @@
     "prettier": "^3.1.0",
     "ts-node": "^10.9.0",
     "tsx": "^4.21.0",
+    "vercel": "^50.40.0",
     "vitest": "^1.0.0"
   },
   "engines": {
