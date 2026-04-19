@@ -24,12 +24,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+        run: npm ci
 
       - name: Run compliance check
         run: npm run compliance:check
@@ -53,12 +48,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+        run: npm ci
 
       - name: Run linter
         run: npm run lint --if-present
@@ -116,12 +106,7 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+        run: npm ci
 
       - name: Build application
         run: npm run build
