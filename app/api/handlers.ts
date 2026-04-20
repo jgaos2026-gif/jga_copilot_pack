@@ -223,7 +223,7 @@ export async function handleCreateProject(req: NextRequest, state: string) {
  * GET /api/state-[state]/projects/[id]
  * Get project details
  */
-export async function handleGetProject(req: NextRequest, state: string, id: string) {
+export async function handleGetProject(_req: NextRequest, state: string, id: string) {
   try {
     const { data, error } = await supabase
       .from('projects')
@@ -453,7 +453,7 @@ export async function handleMfaVerify(req: NextRequest) {
  * GET /api/health
  * Health check endpoint
  */
-export async function handleHealth(req: NextRequest) {
+export async function handleHealth(_req: NextRequest) {
   return NextResponse.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),

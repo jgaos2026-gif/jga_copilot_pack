@@ -6,6 +6,16 @@
 
 ---
 
+## Test Coverage Hardening Checklist (Completed)
+
+- [x] Coverage tooling enabled (`@vitest/coverage-v8`)
+- [x] Coverage baseline analyzed and documented from `vitest --coverage`
+- [x] API handler tests added for success and failure paths
+- [x] Pricing route tests added for validation, not-found, and error paths
+- [x] Full test suite with coverage re-run successfully after test additions
+
+---
+
 ## Pre-Flight Validation (Days 1-10)
 
 - [ ] **Security Audit Passing**
