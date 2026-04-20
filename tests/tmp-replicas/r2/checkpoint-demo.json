@@ -1,8 +1,7 @@
 {
   "brickx": [
     {
-      "id": "1775118035206-ex4ml2i",
-      "id": "1775121253720-jzxni80",
+      "id": "1776649589859-92reqz5",
       "bricId": "s1",
       "schemaVersion": "v1",
       "data": {
@@ -15,5 +14,5 @@
     "ddc5ea6b6b10b7b47c1afff6701296b06771b8a5acbdb1c758f855a0f094a3c4"
   ],
   "merkle": "ddc5ea6b6b10b7b47c1afff6701296b06771b8a5acbdb1c758f855a0f094a3c4",
-  "timestamp": 1775121253727
+  "timestamp": 1776649589865
 }
