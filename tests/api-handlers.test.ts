@@ -33,8 +33,8 @@ const mocks = vi.hoisted(() => {
         return builder;
       }),
       single: vi.fn(async () => singleQueue.shift() ?? { data: null, error: null }),
-      then: (resolve: (value: DbResult) => unknown, reject: (reason?: unknown) => unknown) =>
-        Promise.resolve(queryQueue.shift() ?? { data: null, error: null }).then(resolve, reject),
+      then: (resolve: (value: DbResult) => unknown) =>
+        Promise.resolve(queryQueue.shift() ?? { data: null, error: null }).then(resolve),
     };
 
     return builder;
