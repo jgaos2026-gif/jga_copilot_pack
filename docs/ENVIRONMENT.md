@@ -199,6 +199,7 @@ MAX_FILE_SIZE=10485760  # 10 MB
 STRIPE_PUBLIC_KEY=pk_test_xxxxx
 STRIPE_SECRET_KEY=sk_test_xxxxx
 STRIPE_WEBHOOK_SECRET=whsec_xxxxx
+STRIPE_PAYMENT_SUCCESS_URL=https://yourapp.com/pay/success
 
 # Or PayPal
 PAYPAL_CLIENT_ID=xxxxx

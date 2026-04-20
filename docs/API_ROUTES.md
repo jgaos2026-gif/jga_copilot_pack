@@ -322,6 +322,48 @@ WHERE state_code = 'CA'; -- RLS Policy enforces this
 
 ---
 
+### Issue Stripe Payment Link
+**Endpoint:** `POST /api/payments/stripe-link`
+
+**Authentication:** Server-side only (requires `SUPABASE_SERVICE_ROLE_KEY` + `STRIPE_SECRET_KEY`)
+
+**Purpose:** Creates a Stripe Payment Link for deposit or final payment, logs a `transactions` row with `payment_stage` set to `deposit_sent` or `final_sent`, and updates the project `payment_stage` to match.
+
+**Request Body:**
+```json
+{
+  "project_id": "uuid",
+  "client_id": "uuid",
+  "amount": 2500.00,
+  "currency": "USD",
+  "payment_stage": "deposit",
+  "description": "Deposit for project ACME-42",
+  "customer_email": "client@example.com",
+  "success_url": "https://app.yourdomain.com/pay/success",
+  "state_tag": "IL-01",
+  "metadata": {
+    "quote_id": "Q-1234"
+  }
+}
+```
+
+**Response (201):**
+```json
+{
+  "url": "https://pay.stripe.com/p/link_123",
+  "payment_link_id": "plink_123",
+  "processor": "stripe",
+  "payment_stage": "deposit_sent"
+}
+```
+
+**Notes:**
+- Amount is stored in dollars; Stripe is charged using integer cents.
+- Fallback success URL can be provided via `STRIPE_PAYMENT_SUCCESS_URL`.
+- Payment completion should be confirmed via Stripe webhook to move `payment_stage` to `deposit_paid` or `final_paid`.
+
+---
+
 ## Payment Webhooks
 
 ### Payment Received
