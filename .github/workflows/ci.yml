@@ -5,9 +5,6 @@ on:
     branches: [master, main, develop]
   pull_request:
     branches: [master, main, develop]
-    branches: [main, master, develop]
-  pull_request:
-    branches: [main, master, develop]
 
 permissions:
   contents: read
@@ -120,4 +117,3 @@ jobs:
           name: build-artifacts
           path: .next/
           retention-days: 5
-
