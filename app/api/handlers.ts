@@ -466,7 +466,7 @@ export async function handleMfaVerify(req: NextRequest) {
  * GET /api/health
  * Health check endpoint
  */
-export async function handleHealth(req: NextRequest) {
+export async function handleHealth(_req: NextRequest) {
   return NextResponse.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
