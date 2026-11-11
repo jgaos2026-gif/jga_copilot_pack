@@ -46,6 +46,15 @@ const transactionSchema = z.object({
   amount: z.number().positive(),
   reference_id: z.string(),
 });
+async function getAuthenticatedUser(req: NextRequest) {
+  const authorization = req.headers.get('authorization') ?? '';
+  const match = /^Bearer\\s+([^\\s]+)$/.exec(authorization);
+  if (!match) return null;
+  const { data, error } = await supabase.auth.getUser(match[1]);
+  if (error || !data.user) return null;
+  return data.user;
+}
+
 
 /**
  * POST /api/intake
@@ -102,8 +111,8 @@ export async function handleIntake(req: NextRequest) {
  */
 export async function handleCreateCustomer(req: NextRequest, state: string) {
   try {
-    const auth = req.headers.get('authorization');
-    if (!auth) {
+    const user = await getAuthenticatedUser(req);
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -225,6 +234,10 @@ export async function handleCreateProject(req: NextRequest, state: string) {
  */
 export async function handleGetProject(req: NextRequest, state: string, id: string) {
   try {
+    const user = await getAuthenticatedUser(req);
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     const { data, error } = await supabase
       .from('projects')
       .select('*')
@@ -453,7 +466,7 @@ export async function handleMfaVerify(req: NextRequest) {
  * GET /api/health
  * Health check endpoint
  */
-export async function handleHealth(req: NextRequest) {
+export async function handleHealth(_req: NextRequest) {
   return NextResponse.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
